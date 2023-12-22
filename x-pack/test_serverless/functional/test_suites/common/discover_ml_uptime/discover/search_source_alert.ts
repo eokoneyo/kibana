@@ -378,9 +378,10 @@ export default function ({ getService, getPageObjects }: FtrProviderContext) {
 
       // should not have data view selected by default
       const dataViewSelector = await testSubjects.find('selectDataViewExpression');
-      // TODO: Serverless Security has an existing data view by default
+
       const dataViewSelectorText = await dataViewSelector.getVisibleText();
-      if (!dataViewSelectorText.includes('.alerts-security')) {
+      // TODO: Serverless Security and ES both have an existing data view by default
+      if (!/(\.alerts-security|default:all-data)/.test(dataViewSelectorText)) {
         expect(await dataViewSelector.getVisibleText()).to.eql('DATA VIEW\nSelect a data view');
       }
 
