@@ -1,17 +1,16 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "target/types",
     "types": [
       "jest",
       "node",
-      "react",
-    ],
+      "react"
+    ]
   },
   "include": [
     "**/*.ts",
-  ],
-  "kbn_references": [
+    "**/*.tsx",
   ],
   "exclude": [
     "target/**/*",
