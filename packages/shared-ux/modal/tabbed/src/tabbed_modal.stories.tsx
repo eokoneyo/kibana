@@ -34,6 +34,7 @@ export const TrivialExample = (params: TabbedModalStorybookParams) => {
         {
           id: 'hello',
           title: 'Hello',
+          name: 'hello',
           content: () => {
             return (
               <Fragment>
@@ -48,7 +49,10 @@ export const TrivialExample = (params: TabbedModalStorybookParams) => {
             message: 'Hello World!!',
           },
           modalActionBtn: {
-            label: 'Say Hi 👋🏾',
+            id: 'wave',
+            dataTestSubj: '',
+            formattedMessageId: '',
+            defaultMessage: 'Say Hi 👋🏾',
             handler: ({ state }) => {
               alert(state.message);
             },
@@ -103,6 +107,7 @@ export const NonTrivialExample = (params: TabbedModalStorybookParams) => {
     checkboxIdToSelectedMap: Record<string, boolean>;
   }> = {
     id: 'order',
+    name: 'order',
     title: 'Pizza of choice',
     initialState: {
       checkboxIdToSelectedMap: {
@@ -153,7 +158,10 @@ export const NonTrivialExample = (params: TabbedModalStorybookParams) => {
       );
     },
     modalActionBtn: {
-      label: 'Order 🍕',
+      id: 'pizza',
+      dataTestSubj: '',
+      formattedMessageId: '',
+      defaultMessage: 'Order 🍕',
       handler: ({ state }) => {
         alert(JSON.stringify(state));
       },
