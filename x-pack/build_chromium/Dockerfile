@@ -21,7 +21,4 @@ RUN python3 --version && \
     # Install the OS packages, configure the environment, download the chromium source (25GB)
     python3 ./init.py
 
-RUN python ./build_chromium/build.py ${CHROMIUM_COMMIT_HASH} ${PLATFORM_VARIANT}
-
-## undecided about how build should run, leave as is or run through entrypoint
-ENTRYPOINT [ "executable" ]
+ENTRYPOINT [ "python3", "./build_chromium/build.py", "${CHROMIUM_COMMIT_HASH}",  "${PLATFORM_VARIANT}"]
