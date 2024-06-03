@@ -8,6 +8,7 @@
 
 import * as React from 'react';
 import type { Presentable, PresentableGrouping } from '@kbn/ui-actions-browser/src/types';
+import type { IconType } from '@elastic/eui';
 import { Action, ActionDefinition, ActionMenuItemProps } from './action';
 
 /**
@@ -48,7 +49,7 @@ export class ActionInternal<Context extends object = object>
     return this.definition.execute(context);
   }
 
-  public getIconType(context: Context): string | undefined {
+  public getIconType(context: Context): IconType | undefined {
     if (!this.definition.getIconType) return undefined;
     return this.definition.getIconType(context);
   }

@@ -14,6 +14,7 @@ import {
   EuiIcon,
   EuiSpacer,
   EuiToolTip,
+  type IconType,
 } from '@elastic/eui';
 import React, { useState } from 'react';
 import { TextWithIcon } from '../text_with_icon';
@@ -33,7 +34,7 @@ export interface DrilldownTableItem {
   id: string;
   actionName: string;
   drilldownName: string;
-  icon?: string;
+  icon?: IconType;
   error?: string;
   triggers?: Trigger[];
   triggerIncompatible?: boolean;

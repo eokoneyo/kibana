@@ -6,6 +6,7 @@
  * Side Public License, v 1.
  */
 
+import type { IconType } from '@elastic/eui';
 import { ToastsStart } from '@kbn/core/public';
 import { IStorageWrapper } from '@kbn/kibana-utils-plugin/public';
 import { Trigger } from '@kbn/ui-actions-plugin/public';
@@ -96,7 +97,7 @@ export interface DrilldownTemplate {
   /**
    * EUI icon display next to the description.
    */
-  icon?: string;
+  icon?: IconType;
 
   /**
    * A user facing text that provides information about the source of this template.

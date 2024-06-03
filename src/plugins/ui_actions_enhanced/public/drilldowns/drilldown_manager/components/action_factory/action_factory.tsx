@@ -15,6 +15,7 @@ import {
   EuiIcon,
   EuiLink,
   EuiText,
+  type IconType,
 } from '@elastic/eui';
 import React from 'react';
 import { i18n } from '@kbn/i18n';
@@ -71,7 +72,7 @@ export interface ActionFactoryProps {
   name?: string;
 
   /** ID of EUI icon. */
-  icon?: string;
+  icon?: IconType;
 
   /** Whether the current drilldown type is in beta. */
   beta?: boolean;

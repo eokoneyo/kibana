@@ -14,12 +14,13 @@ import {
   EuiFlexItem,
   EuiIcon,
   EuiToolTip,
+  type IconType,
 } from '@elastic/eui';
 
 export interface TextWithIconProps {
   color?: EuiTextColorProps['color'];
   tooltip?: React.ReactNode;
-  icon?: string;
+  icon?: IconType;
   iconColor?: string;
   iconTooltip?: React.ReactNode;
 }

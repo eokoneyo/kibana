@@ -7,6 +7,7 @@
  */
 
 import type { FC } from 'react';
+import type { IconType } from '@elastic/eui';
 import type { CollectConfigProps } from '@kbn/kibana-utils-plugin/public';
 import type {
   MigrateFunctionsObject,
@@ -77,7 +78,7 @@ export class ActionFactory<
     this.migrations = this.def.migrations || {};
   }
 
-  public getIconType(context: FactoryContext): string | undefined {
+  public getIconType(context: FactoryContext): IconType | undefined {
     if (!this.def.getIconType) return undefined;
     return this.def.getIconType(context);
   }

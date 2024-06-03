@@ -6,6 +6,7 @@
  * Side Public License, v 1.
  */
 
+import type { IconType } from '@elastic/eui';
 import type { Presentable } from '@kbn/ui-actions-browser/src/types';
 import type { Trigger } from '@kbn/ui-actions-browser/src/triggers';
 import { Subscription } from 'rxjs';
@@ -63,7 +64,7 @@ export interface Action<Context extends object = object>
   /**
    * Optional EUI icon type that can be displayed along with the title.
    */
-  getIconType(context: ActionExecutionContext<Context>): string | undefined;
+  getIconType(context: ActionExecutionContext<Context>): IconType | undefined;
 
   /**
    * Returns a title to be displayed to the user.

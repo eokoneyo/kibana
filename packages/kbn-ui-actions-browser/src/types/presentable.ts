@@ -6,6 +6,7 @@
  * Side Public License, v 1.
  */
 
+import type { IconType } from '@elastic/eui';
 import type { FC } from 'react';
 
 /**
@@ -32,7 +33,7 @@ export interface Presentable<Context = unknown> {
   /**
    * Optional EUI icon type that can be displayed along with the title.
    */
-  getIconType(context: Context): string | undefined;
+  getIconType(context: Context): IconType | undefined;
 
   /**
    * Returns a title to be displayed to the user.

@@ -7,7 +7,11 @@
  */
 
 import * as React from 'react';
-import { EuiContextMenuPanelDescriptor, EuiContextMenuPanelItemDescriptor } from '@elastic/eui';
+import type {
+  EuiContextMenuPanelDescriptor,
+  EuiContextMenuPanelItemDescriptor,
+  EuiContextMenuItemIcon,
+} from '@elastic/eui';
 import { i18n } from '@kbn/i18n';
 import type { Trigger } from '@kbn/ui-actions-browser/src/triggers';
 import type { Action, ActionExecutionContext, ActionInternal } from '../actions';
@@ -37,7 +41,7 @@ type ItemDescriptor = EuiContextMenuPanelItemDescriptor & {
 
 type PanelDescriptor = EuiContextMenuPanelDescriptor & {
   _level?: number;
-  _icon?: string;
+  _icon?: EuiContextMenuItemIcon;
   items: ItemDescriptor[];
 };
 
@@ -145,13 +149,17 @@ export async function buildContextMenuForActions({
             title: name,
             items: [],
             _level: i,
-            _icon: group.getIconType ? group.getIconType(context) : 'empty',
+            _icon: group.getIconType
+              ? (group.getIconType(context) as EuiContextMenuItemIcon)
+              : 'empty',
           };
           if (parentPanel) {
             panels[parentPanel].items!.push({
               name,
               panel: currentPanel,
-              icon: group.getIconType ? group.getIconType(context) : 'empty',
+              icon: group.getIconType
+                ? (group.getIconType(context) as EuiContextMenuItemIcon)
+                : 'empty',
               _order: group.order || 0,
               _title: group.getDisplayName ? group.getDisplayName(context) : '',
             });
@@ -164,7 +172,7 @@ export async function buildContextMenuForActions({
       name: action.MenuItem
         ? React.createElement(action.MenuItem, { context })
         : action.getDisplayName(context),
-      icon: action.getIconType(context),
+      icon: action.getIconType(context) as EuiContextMenuItemIcon,
       toolTipContent: action.getDisplayNameTooltip ? action.getDisplayNameTooltip(context) : '',
       'data-test-subj': `embeddablePanelAction-${action.id}`,
       onClick: onClick(action, context, closeMenu),

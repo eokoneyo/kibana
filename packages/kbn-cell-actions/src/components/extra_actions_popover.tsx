@@ -12,6 +12,7 @@ import {
   EuiPopover,
   EuiScreenReaderOnly,
   EuiWrappingPopover,
+  type EuiContextMenuItemIcon,
 } from '@elastic/eui';
 import React, { useMemo } from 'react';
 import { euiThemeVars } from '@kbn/ui-theme';
@@ -115,7 +116,7 @@ const ExtraActionsPopOverContent: React.FC<ExtraActionsPopOverContentProps> = ({
         <EuiContextMenuItem
           css={euiContextMenuItemCSS}
           key={action.id}
-          icon={action.getIconType(actionContext)}
+          icon={action.getIconType(actionContext) as EuiContextMenuItemIcon}
           aria-label={action.getDisplayName(actionContext)}
           data-test-subj={`actionItem-${action.id}`}
           onClick={() => {
