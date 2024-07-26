@@ -45,12 +45,15 @@ type KibanaPrivilegeBase = keyof NonNullable<KibanaFeatureConfig['privileges']>;
 
 interface Props {
   space: Space;
+  /**
+   * List of roles assigned to this space
+   */
   roles: Role[];
   features: KibanaFeature[];
   isReadOnly: boolean;
 }
 
-const filterRolesAssignedToSpace = (roles: Role[], space: Space) => {
+export const filterRolesAssignedToSpace = (roles: Role[], space: Space) => {
   return roles.filter((role) =>
     role.kibana.reduce((acc, cur) => {
       return (
@@ -96,12 +99,6 @@ export const ViewSpaceAssignedRoles: FC<Props> = ({ space, roles, features, isRe
     }
   }, [roleAPIClientInitialized]);
 
-  const rolesInUse = filterRolesAssignedToSpace(roles, space);
-
-  if (!rolesInUse) {
-    return null;
-  }
-
   return (
     <>
       {showRolesPrivilegeEditor && (
@@ -141,7 +138,7 @@ export const ViewSpaceAssignedRoles: FC<Props> = ({ space, roles, features, isRe
         <EuiFlexItem>
           <SpaceAssignedRolesTable
             isReadOnly={isReadOnly}
-            assignedRoles={rolesInUse}
+            assignedRoles={roles}
             onAssignNewRoleClick={async () => {
               if (!roleAPIClientInitialized) {
                 await resolveRolesAPIClient();

@@ -17,7 +17,7 @@ import { TAB_ID_CONTENT, TAB_ID_FEATURES, TAB_ID_GENERAL, TAB_ID_ROLES } from '.
 import { ViewSpaceContent } from './view_space_content_tab';
 import { ViewSpaceEnabledFeatures } from './view_space_features_tab';
 import { ViewSpaceSettings } from './view_space_general_tab';
-import { ViewSpaceAssignedRoles } from './view_space_roles';
+import { filterRolesAssignedToSpace, ViewSpaceAssignedRoles } from './view_space_roles';
 import type { Space } from '../../../common';
 import { getEnabledFeatures } from '../lib/feature_utils';
 
@@ -89,6 +89,8 @@ export const getTabs = ({
   }
 
   if (canUserViewRoles) {
+    const rolesAssignedToSpace = filterRolesAssignedToSpace(roles, space);
+
     tabsDefinition.push({
       id: TAB_ID_ROLES,
       name: i18n.translate('xpack.spaces.management.spaceDetails.contentTabs.roles.heading', {
@@ -96,13 +98,13 @@ export const getTabs = ({
       }),
       append: (
         <EuiNotificationBadge className="eui-alignCenter" color="subdued" size="m">
-          {roles.length}
+          {rolesAssignedToSpace.length}
         </EuiNotificationBadge>
       ),
       content: (
         <ViewSpaceAssignedRoles
           space={space}
-          roles={roles}
+          roles={rolesAssignedToSpace}
           features={features}
           isReadOnly={!canUserModifyRoles}
         />
