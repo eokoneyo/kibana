@@ -20,6 +20,7 @@ import {
 import React, { Fragment, useMemo, useState } from 'react';
 
 import { FormattedMessage } from '@kbn/i18n-react';
+import { FeatureTableCell, isGlobalPrivilegeDefinition } from '@kbn/security-ui-components';
 import type { Space, SpacesApiUi } from '@kbn/spaces-plugin/public';
 
 import type { EffectiveFeaturePrivileges } from './privilege_summary_calculator';
@@ -29,8 +30,6 @@ import { SpaceColumnHeader } from './space_column_header';
 import type { Role, RoleKibanaPrivilege } from '../../../../../../../common';
 import { ALL_SPACES_ID } from '../../../../../../../common/constants';
 import type { KibanaPrivileges, PrimaryFeaturePrivilege, SecuredFeature } from '../../../../model';
-import { isGlobalPrivilegeDefinition } from '../../../privilege_utils';
-import { FeatureTableCell } from '../feature_table_cell';
 
 export interface PrivilegeSummaryTableProps {
   role: Role;

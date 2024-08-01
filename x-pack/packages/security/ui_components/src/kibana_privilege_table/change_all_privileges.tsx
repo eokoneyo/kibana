@@ -20,7 +20,7 @@ import React, { Component } from 'react';
 
 import { FormattedMessage } from '@kbn/i18n-react';
 
-import type { KibanaPrivilege } from '../../../../model';
+import type { KibanaPrivilege } from '@kbn/security-plugin/public/management/roles/model';
 import { NO_PRIVILEGE_VALUE } from '../constants';
 
 interface Props {

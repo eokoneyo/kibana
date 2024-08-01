@@ -5,7 +5,7 @@
  * 2.0.
  */
 
-import type { RoleKibanaPrivilege } from '../../../../common';
+import type { RoleKibanaPrivilege } from '@kbn/security-plugin-types-common';
 
 /**
  * Determines if the passed privilege spec defines global privileges.

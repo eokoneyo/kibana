@@ -5,9 +5,12 @@
  * 2.0.
  */
 
-import type { Role } from '../../../../../../../common';
-import type { KibanaPrivileges, SubFeaturePrivilegeGroup } from '../../../../model';
-import { isGlobalPrivilegeDefinition } from '../../../privilege_utils';
+import type { Role } from '@kbn/security-plugin-types-common';
+import type {
+  KibanaPrivileges,
+  SubFeaturePrivilegeGroup,
+} from '@kbn/security-plugin/public/management/roles/model';
+import { isGlobalPrivilegeDefinition } from './utils/privilege_utils';
 
 /**
  * Calculator responsible for determining the displayed and effective privilege values for the following interfaces:

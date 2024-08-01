@@ -5,10 +5,11 @@
  * 2.0.
  */
 
-import type { Role, RoleKibanaPrivilege } from '../../../../../../../common';
+import type { Role, RoleKibanaPrivilege } from '@kbn/security-plugin-types-common';
+import { isGlobalPrivilegeDefinition } from '@kbn/security-ui-components';
+
 import type { KibanaPrivileges, PrimaryFeaturePrivilege, SecuredFeature } from '../../../../model';
 import type { PrivilegeCollection } from '../../../../model/privilege_collection';
-import { isGlobalPrivilegeDefinition } from '../../../privilege_utils';
 
 export interface EffectiveFeaturePrivileges {
   [featureId: string]: {

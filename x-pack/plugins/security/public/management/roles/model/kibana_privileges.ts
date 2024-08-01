@@ -6,12 +6,12 @@
  */
 
 import type { KibanaFeature } from '@kbn/features-plugin/common';
+import { isGlobalPrivilegeDefinition } from '@kbn/security-ui-components';
 
 import { KibanaPrivilege } from './kibana_privilege';
 import { PrivilegeCollection } from './privilege_collection';
 import { SecuredFeature } from './secured_feature';
 import type { RawKibanaPrivileges, RoleKibanaPrivilege } from '../../../../common';
-import { isGlobalPrivilegeDefinition } from '../edit_role/privilege_utils';
 
 function toBasePrivilege(entry: [string, string[]]): [string, KibanaPrivilege] {
   const [privilegeId, actions] = entry;

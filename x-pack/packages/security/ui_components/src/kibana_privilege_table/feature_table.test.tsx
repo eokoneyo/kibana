@@ -13,8 +13,8 @@ import { findTestSubject, mountWithIntl } from '@kbn/test-jest-helpers';
 
 import { getDisplayedFeaturePrivileges } from './__fixtures__';
 import { FeatureTable } from './feature_table';
-import type { Role } from '../../../../../../../common';
-import { createFeature, kibanaFeatures } from '../../../../__fixtures__/kibana_features';
+import type { Role } from '@kbn/security-plugin-types-common';
+import { createFeature, kibanaFeatures } from './__fixtures__/kibana_features';
 import { createKibanaPrivileges } from '../../../../__fixtures__/kibana_privileges';
 import { PrivilegeFormCalculator } from '../privilege_form_calculator';
 
