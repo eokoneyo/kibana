@@ -27,6 +27,8 @@ export function installBrowser(
 ): { binaryPath$: Rx.Subject<string> } {
   const binaryPath$ = new Rx.Subject<string>();
 
+  console.log('__dirname value on install:: %o ', __dirname);
+
   const paths = new ChromiumArchivePaths();
   const pkg = paths.find(platform, architecture);
 
@@ -35,7 +37,7 @@ export function installBrowser(
   }
 
   const backgroundInstall = async () => {
-    const binaryPath = paths.getBinaryPath(pkg, path.resolve(__dirname, '../../chromium'));
+    const binaryPath = paths.getBinaryPath(pkg, chromiumPath);
     const binaryChecksum = await sha256(binaryPath).catch(() => '');
 
     if (binaryChecksum !== pkg.binaryChecksum) {

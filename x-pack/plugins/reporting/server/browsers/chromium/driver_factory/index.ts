@@ -98,6 +98,10 @@ export class HeadlessChromiumDriverFactory {
       let devTools: any;
       let startMetrics: Metrics | undefined;
 
+      // include to verify issue I think we have with the value of __dirname
+      console.log('::binary path:: %o \n', this.binaryPath);
+      console.log('::browser config:: %o \n', this.browserConfig);
+
       try {
         browser = await launch({
           browserConfig: this.browserConfig,
