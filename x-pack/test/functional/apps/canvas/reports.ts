@@ -6,6 +6,7 @@
  */
 
 import expect from '@kbn/expect';
+import { comparePdfToSnapshot } from 'pdf-visual-diff';
 
 import { FtrProviderContext } from '../../ftr_provider_context';
 
@@ -65,6 +66,9 @@ export default function ({ getService, getPageObjects }: FtrProviderContext) {
         expect(res.get('content-type')).to.equal('application/pdf');
         expect(res.get('content-disposition')).to.equal(
           'attachment; filename=The%20Very%20Cool%20Workpad%20for%20PDF%20Tests.pdf'
+        );
+        await comparePdfToSnapshot(res.body, __dirname, 'very_cool_canvas_workpad_pdf_export').then(
+          (result) => expect(result).to.equal(true)
         );
       });
     });
