@@ -106,6 +106,8 @@
     "@kbn/unified-tabs",
     "@kbn/unified-histogram",
     "@kbn/alerts-ui-shared"
+    "@kbn/grouping",
+    "@kbn/core-notifications-browser",
   ],
   "exclude": ["target/**/*"]
 }
