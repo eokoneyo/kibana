@@ -25,7 +25,7 @@ export interface ShareRegistryApiStart {
 
 export type ShareTypes = 'link' | 'embed' | 'legacy' | 'integration';
 
-export type InternalShareActionIntent = Exclude<ShareTypes, 'integration'>;
+export type InternalShareActionIntent = Exclude<ShareTypes, 'integration' | 'legacy'>;
 
 type ShareActionUserInputBase<E extends Record<string, unknown> = Record<string, unknown>> = {
   /**
@@ -139,7 +139,6 @@ export interface ExportShare
 
 export type ShareActionIntents = LinkShare | EmbedShare | ShareLegacy | ShareIntegration;
 
-// Example usage
 export type LinkShareConfig = ShareImplementation<LinkShare>;
 export type EmbedShareConfig = ShareImplementation<EmbedShare>;
 export type ExportShareConfig = ShareImplementation<ExportShare>;
@@ -286,15 +285,6 @@ export interface ExportGenerationOpts {
   optimizedForPrinting?: boolean;
   intl: InjectedIntl;
 }
-
-/**
- * @public
- * A source for additional menu items shown in the share context menu. Any provider
- * registered via `share.register()` will be called if a consumer displays the context
- * menu. Returned `ShareMenuItem`s will be shown in the context menu together with the
- * default built-in share options. Each share provider needs a globally unique id.
- * */
-// export type ShareMenuProvider =  ShareMenuProviderLegacy;
 
 interface UrlParamExtensionProps {
   setParamValue: (values: {}) => void;

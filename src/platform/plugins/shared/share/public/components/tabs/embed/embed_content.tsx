@@ -39,7 +39,7 @@ type EmbedProps = Pick<
   | 'isDirty'
   | 'allowShortUrl'
 > &
-  Extract<EmbedShareConfig, 'config'> & {
+  EmbedShareConfig['config'] & {
     objectConfig: EmbedShareUIConfig;
   };
 
