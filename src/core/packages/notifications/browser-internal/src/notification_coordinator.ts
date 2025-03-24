@@ -59,10 +59,11 @@ export class Coordinator {
   ) {
     const on$ = this.coordinationLock$.pipe(Rx.filter((...args) => cond(...args)));
     const off$ = this.coordinationLock$.pipe(Rx.filter((...args) => !cond(...args)));
+    const multicast$ = $.pipe(Rx.share());
 
     return Rx.merge(
-      $.pipe(Rx.bufferToggle(off$, () => on$)),
-      $.pipe(Rx.windowToggle(on$, () => off$))
+      multicast$.pipe(Rx.bufferToggle(off$, () => on$)),
+      multicast$.pipe(Rx.windowToggle(on$, () => off$))
     ).pipe(
       Rx.mergeMap((x) => x),
       Rx.tap((value) => {
