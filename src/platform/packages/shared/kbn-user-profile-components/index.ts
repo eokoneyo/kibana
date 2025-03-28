@@ -23,7 +23,7 @@ export type {
   GetUserDisplayNameParams,
 } from './src/user_profile';
 export type {
-  UserProfileData,
+  ProfileData as UserProfileData,
   UserSettingsData,
   DarkModeValue,
   UserProfileAvatarData,

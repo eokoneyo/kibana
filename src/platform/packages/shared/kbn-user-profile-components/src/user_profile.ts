@@ -9,7 +9,7 @@
 
 import { VISUALIZATION_COLORS } from '@elastic/eui';
 
-import type { UserProfileAvatarData, UserProfileData } from './types';
+import type { UserProfileAvatarData, ProfileData as UserProfileData } from './types';
 
 /**
  * IMPORTANT:

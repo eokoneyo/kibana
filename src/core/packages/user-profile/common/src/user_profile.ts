@@ -19,7 +19,7 @@
 /**
  * Describes basic properties stored in user profile.
  */
-export interface UserProfile<D extends UserProfileData = UserProfileData> {
+export interface UserProfile<D extends Record<string, unknown> = Record<string, unknown>> {
   /**
    * Unique ID for of the user profile.
    */
@@ -38,7 +38,7 @@ export interface UserProfile<D extends UserProfileData = UserProfileData> {
   /**
    * User specific data associated with the profile.
    */
-  data: Partial<D>;
+  data: Partial<UserProfileData<D>>;
 }
 
 /**
@@ -62,15 +62,16 @@ export interface UserProfileUserInfo {
 /**
  * Placeholder for data stored in user profile.
  */
-export type UserProfileData = Record<string, unknown> & {
+export type UserProfileData<T extends Record<string, unknown> = Record<string, unknown>> = T & {
   userSettings?: UserSettingsData;
 };
 
 /**
  * User settings stored in the data object of the User Profile
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-interface -- disabling empty so we can add more properties later, also allows other folks to augment this interface
-export interface UserSettingsData {}
+export interface UserSettingsData {
+  [key: string]: unknown;
+}
 
 /**
  * Type of the user profile labels structure (currently

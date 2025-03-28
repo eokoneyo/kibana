@@ -24,7 +24,7 @@ import {
 /**
  * Convenience type for a {@link UserProfile} with avatar data
  */
-export type UserProfileWithAvatar = UserProfile<{ avatar?: UserProfileAvatarData }>;
+export type UserProfileWithAvatar = UserProfile;
 
 /**
  * Props of {@link UserAvatar} component

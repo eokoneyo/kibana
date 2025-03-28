@@ -9,6 +9,8 @@
 
 import type { Observable } from 'rxjs';
 
+import type { UserProfileData } from '@kbn/core-user-profile-common';
+
 /**
  * Avatar stored in user profile.
  */
@@ -29,23 +31,26 @@ export interface UserProfileAvatarData {
 
 export type DarkModeValue = 'system' | 'dark' | 'light' | 'space_default';
 
-/**
- * User settings stored in the data object of the User Profile
- */
-export interface UserSettingsData {
-  darkMode?: DarkModeValue;
-  solutionNavOptOut?: boolean;
+declare module '@kbn/core-user-profile-common' {
+  /**
+   * Augment user settings stored in the data object of the User Profile, with additional fields.
+   */
+  interface UserSettingsData {
+    darkMode?: DarkModeValue;
+    solutionNavOptOut?: boolean;
+  }
 }
 
-export interface UserProfileData {
+// export the augment user settings data for use in other packages
+export type { UserSettingsData } from '@kbn/core-user-profile-common';
+
+export type ProfileData = UserProfileData<{
   avatar?: UserProfileAvatarData;
-  userSettings?: UserSettingsData;
-  [key: string]: unknown;
-}
+}>;
 
 export interface UserProfileAPIClient {
-  userProfile$: Observable<UserProfileData | null>;
+  userProfile$: Observable<ProfileData | null>;
   enabled$: Observable<boolean>;
   userProfileLoaded$: Observable<boolean>;
-  partialUpdate: <D extends Partial<UserProfileData>>(data: D) => Promise<void>;
+  partialUpdate: <D extends Partial<ProfileData>>(data: D) => Promise<void>;
 }
