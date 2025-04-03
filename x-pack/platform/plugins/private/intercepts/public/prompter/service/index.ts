@@ -5,4 +5,9 @@
  * 2.0.
  */
 
-export const TRIGGER_DEF_ID = 'productInterceptTrigger' as const;
+export { InterceptDialogService } from './intercept_dialog_service';
+export type { InterceptServiceStartDeps } from './intercept_dialog_service';
+export type {
+  InterceptDialogApi,
+  InterceptWithoutRunId as Intercept,
+} from './intercept_dialog_api';

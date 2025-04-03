@@ -5,4 +5,8 @@
  * 2.0.
  */
 
-export const TRIGGER_DEF_ID = 'productInterceptTrigger' as const;
+module.exports = {
+  preset: '@kbn/test',
+  rootDir: '../../../../..',
+  roots: ['<rootDir>/x-pack/platform/plugins/private/intercepts'],
+};

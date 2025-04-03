@@ -6,10 +6,8 @@
  * your election, the "Elastic License 2.0", the "GNU Affero General Public
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
-
-import type { FC } from 'react';
 import type { Observable } from 'rxjs';
-import type { EuiGlobalToastListToast as EuiToast, EuiTourStepProps } from '@elastic/eui';
+import type { EuiGlobalToastListToast as EuiToast } from '@elastic/eui';
 import type { MountPoint } from '@kbn/core-mount-utils-browser';
 
 /**
@@ -79,37 +77,23 @@ export interface IToasts {
   addError: (error: Error, options: ErrorToastOptions) => Toast;
 }
 
-interface InterceptSteps extends Pick<EuiTourStepProps, 'title'> {
-  id: string;
-  /**
-   * expects a react component that will be rendered in the dialog, and expects a callback to be called with the value
-   * of the step when the user is done with the step.
-   */
-  content: FC<{ onValue: (value: unknown) => void }>;
+interface NotificationCoordinatorState {
+  locked: boolean;
+  controller: string | null;
 }
 
-interface StartingInterceptStep extends InterceptSteps {
-  id: 'start';
+export interface NotificationCoordinatorPublicImpl {
+  optInToCoordination: <
+    T extends Array<{
+      id: string;
+    }>
+  >(
+    $: Observable<T>,
+    cond: (value: NotificationCoordinatorState, index: number) => boolean
+  ) => Observable<T>;
+  acquireLock: () => void;
+  releaseLock: () => void;
+  lock$: Observable<NotificationCoordinatorState>;
 }
 
-interface CompletionInterceptStep extends InterceptSteps {
-  id: 'completion';
-}
-
-export interface Intercept {
-  id: string;
-  steps: [StartingInterceptStep, ...InterceptSteps[], CompletionInterceptStep];
-  /**
-   * Provides the response of the user interaction with the dialog for a particular step. Progress will not fire for the start or completion steps.
-   */
-  onProgress?: (stepId: string, stepResponse: unknown) => void;
-  /**
-   * Provides the response of the users interaction within the dialog as a object with keys corresponding to the id of the steps.
-   */
-  onFinish: ({ response }: { response: Record<string, unknown> }) => void;
-  onDismiss?: () => void;
-}
-
-export interface IInterceptPublicApi {
-  add(productIntercept: Intercept): string;
-}
+export type NotificationCoordinator = (registrar: string) => NotificationCoordinatorPublicImpl;

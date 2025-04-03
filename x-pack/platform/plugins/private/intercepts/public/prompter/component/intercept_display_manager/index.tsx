@@ -5,4 +5,5 @@
  * 2.0.
  */
 
-export const TRIGGER_DEF_ID = 'productInterceptTrigger' as const;
+export type { Intercept } from './intercept_display_manager';
+export { InterceptDisplayManager } from './intercept_display_manager';

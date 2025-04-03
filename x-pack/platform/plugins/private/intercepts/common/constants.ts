@@ -5,4 +5,7 @@
  * 2.0.
  */
 
-export const TRIGGER_DEF_ID = 'productInterceptTrigger' as const;
+export const TRIGGER_INFO_API_ROUTE = '/internal/product_intercept/trigger_info' as const;
+
+export const TRIGGER_USER_INTERACTION_METADATA_API_ROUTE =
+  '/api/intercept/user_interaction/{triggerId}' as const;

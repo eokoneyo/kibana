@@ -5,4 +5,4 @@
  * 2.0.
  */
 
-export const TRIGGER_DEF_ID = 'productInterceptTrigger' as const;
+export { InterceptTelemetry } from './event_reporter';

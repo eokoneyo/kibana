@@ -19,7 +19,6 @@ import type { OverlayStart } from '@kbn/core-overlays-browser';
 import type { NotificationsSetup, NotificationsStart } from '@kbn/core-notifications-browser';
 import type { PublicMethodsOf } from '@kbn/utility-types';
 import { showErrorDialog, ToastsService } from './toasts';
-import { InterceptDialogService } from './intercept';
 import { Coordinator, notificationCoordinator } from './notification_coordinator';
 
 export interface SetupDeps {
@@ -39,20 +38,18 @@ export interface StartDeps {
 /** @public */
 export class NotificationsService {
   private readonly toasts: ToastsService;
-  private readonly intercepts: InterceptDialogService;
   private uiSettingsErrorSubscription?: Rx.Subscription;
   private targetDomElement?: HTMLElement;
   private readonly coordinator = notificationCoordinator.bind(new Coordinator());
 
   constructor() {
     this.toasts = new ToastsService();
-    this.intercepts = new InterceptDialogService();
   }
 
   public setup({ uiSettings, analytics }: SetupDeps): NotificationsSetup {
     const notificationSetup = {
       toasts: this.toasts.setup({ uiSettings, analytics }),
-      intercepts: this.intercepts.setup({ analytics }),
+      coordinator: this.coordinator,
     };
 
     this.uiSettingsErrorSubscription = uiSettings.getUpdateErrors$().subscribe((error: Error) => {
@@ -77,20 +74,6 @@ export class NotificationsService {
         overlays,
         targetDomElement: toastsContainer,
         notificationCoordinator: this.coordinator,
-        ...startDeps,
-      }),
-      intercepts: this.intercepts.start({
-        overlays,
-        notificationCoordinator: this.coordinator,
-        targetDomElement: (() => {
-          // create container to mount product intercept dialog into
-          const productInterceptContainer = Object.assign(document.createElement('div'), {
-            id: 'productInterceptMountPoint',
-            style: { height: 0 },
-          });
-          targetDomElement.appendChild(productInterceptContainer);
-          return productInterceptContainer;
-        })(),
         ...startDeps,
       }),
       showErrorDialog: ({ title, error }) =>

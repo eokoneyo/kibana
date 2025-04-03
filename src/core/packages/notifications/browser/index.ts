@@ -14,8 +14,7 @@ export type {
   ToastInput,
   IToasts,
   ToastInputFields,
-  IInterceptPublicApi,
-  Intercept,
+  NotificationCoordinator,
 } from './src/types';
 export type {
   ToastsSetup,

@@ -24,9 +24,7 @@
     "@kbn/core-notifications-browser-mocks",
     "@kbn/core-user-profile-browser-mocks",
     "@kbn/core-analytics-browser-mocks",
-    "@kbn/cloud-plugin",
-    "@kbn/intercepts-plugin"
+    "@kbn/cloud-plugin"
   ],
   "exclude": ["target/**/*"]
 }
-  
