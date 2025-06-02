@@ -170,9 +170,19 @@ function ExportMenuPopover({ intl }: ExportMenuProps) {
                 label={menuItem.config.label}
                 data-test-subj={`exportMenuItem-${menuItem.config.label}`}
                 isDisabled={menuItem.config.disabled}
-                onClick={() => {
-                  setSelectedMenuItemId(menuItem.id);
-                  setIsFlyoutVisible(true);
+                onClick={async () => {
+                  if (
+                    !menuItem.config.copyAssetURIConfig &&
+                    !menuItem.config.generateAssetComponent
+                  ) {
+                    await menuItem.config.generateAssetExport({
+                      intl,
+                      optimizedForPrinting: usePrintLayout,
+                    });
+                  } else {
+                    setSelectedMenuItemId(menuItem.id);
+                    setIsFlyoutVisible(true);
+                  }
                 }}
               />
             </EuiToolTip>
@@ -238,7 +248,10 @@ function ExportMenuPopover({ intl }: ExportMenuProps) {
                         <EuiFlexItem>
                           <EuiCodeBlock
                             data-test-subj="exportAssetValue"
-                            css={{ overflowWrap: 'break-word' }}
+                            css={{
+                              overflowWrap: 'break-word',
+                            }}
+                            overflowHeight={360}
                             language={selectedMenuItem?.config.copyAssetURIConfig.contentType}
                             isCopyable
                             copyAriaLabel={i18n.translate('share.export.copyPostURLAriaLabel', {
