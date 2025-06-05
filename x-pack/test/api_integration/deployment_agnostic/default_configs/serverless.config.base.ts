@@ -135,6 +135,8 @@ export function createServerlessTestConfig<T extends DeploymentAgnosticCommonSer
           ...(dockerRegistryPort
             ? [`--xpack.fleet.registryUrl=http://localhost:${dockerRegistryPort}`]
             : []),
+          // enable product intercept for api ftr tests
+          '--xpack.intercepts.enabled=true',
         ],
       },
       testFiles: options.testFiles,
