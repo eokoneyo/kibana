@@ -152,10 +152,12 @@ function ExportMenuPopover({ intl }: ExportMenuProps) {
     <Fragment>
       <EuiWrappingPopover
         isOpen={!isFlyoutVisible}
-        data-test-subj="exportPopover"
         button={anchorElement!}
         closePopover={onClose}
         panelPaddingSize="none"
+        panelProps={{
+          'data-test-subj': 'exportPopoverPanel',
+        }}
       >
         <EuiListGroup>
           {shareMenuItems.map((menuItem) => (
