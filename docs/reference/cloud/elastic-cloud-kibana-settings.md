@@ -57,10 +57,10 @@ You can configure the following X-Pack settings from the Kibana **User Settings*
 ### Version 9.1.0 [ec_version_9_1_0]
 
 `xpack.product_intercept.enabled`
-:   Enable or disable the product intercept feature.
+:   Enable or disable Elastic product feedback prompts. Defaults to `true`.
 
 `xpack.product_intercept.interval`:
-:   Set the interval for the product intercept feature.
+:   Set the time that elapses between Elastic product feedback prompts. The time is formatted as a number and a time unit (d,h,m,s). For example, 20m, 24h, 7d. Defaults to `90d`.
 
 ### Version 8.18+ [ec_version_8_18]
 
