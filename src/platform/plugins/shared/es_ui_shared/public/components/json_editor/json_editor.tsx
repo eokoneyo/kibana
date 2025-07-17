@@ -8,7 +8,7 @@
  */
 
 import React, { useCallback, useMemo } from 'react';
-import { EuiFormRow } from '@elastic/eui';
+import { EuiFormRow, useGeneratedHtmlId } from '@elastic/eui';
 import { debounce } from 'lodash';
 import { CodeEditor } from '@kbn/code-editor';
 
@@ -77,8 +77,11 @@ function JsonEditorComp<T extends object = { [key: string]: any }>({
     [isControlled, debouncedSetContent, onUpdate]
   );
 
+  const jsonEditorRowId = useGeneratedHtmlId();
+
   return (
     <EuiFormRow
+      id={jsonEditorRowId}
       label={label}
       helpText={helpText}
       isInvalid={typeof error === 'string'}
@@ -87,6 +90,7 @@ function JsonEditorComp<T extends object = { [key: string]: any }>({
       {...rest}
     >
       <CodeEditor
+        aria-describedby={jsonEditorRowId}
         languageId="json"
         height={500}
         options={{
