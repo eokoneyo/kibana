@@ -57,10 +57,12 @@ export const styles = (
       borderBottom: `${euiTheme.border.width.thin} solid ${euiTheme.border.color}`,
     },
   }),
-  rowInner: css({
-    width: '100%',
-    position: 'relative',
-    ...(isExpandedChildRow
+  rowInner: css([
+    {
+      width: '100%',
+      position: 'relative',
+    },
+    isExpandedChildRow
       ? {
           padding: euiTheme.size[size],
           ...(rowDepth % 2 === 1
@@ -151,6 +153,6 @@ export const styles = (
               borderBottom: `${euiTheme.border.width.thin} solid ${euiTheme.border.color}`,
             },
         }
-      : {}),
-  }),
+      : {},
+  ]),
 });
