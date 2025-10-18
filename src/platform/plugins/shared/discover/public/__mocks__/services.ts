@@ -270,6 +270,7 @@ export function createDiscoverServicesMock(): DiscoverServices {
     discoverShared: discoverSharedPluginMock.createStartContract().features,
     discoverFeatureFlags: {
       getTabsEnabled: () => true,
+      getCascadeLayoutEnabled: jest.fn(() => false),
     },
   } as unknown as DiscoverServices;
 }

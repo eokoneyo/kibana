@@ -582,24 +582,24 @@ export function getDiscoverStateContainer({
 
     trackQueryFields(query);
 
-    const internalStateStore = internalState.getState();
-    const currentTabState = internalStateStore.tabs.byId[internalStateStore.tabs.unsafeCurrentId];
+    const currentTabState = getCurrentTab();
 
     // if no grouping is selected, user has opted out of cascade view
-    // reset the cascade state in the store and return
-    internalState.dispatch(
-      injectCurrentTab(internalStateActions.setLayoutUiState)({
-        layoutUiState: {
-          ...(currentTabState.uiState?.layout ?? {}),
-          supportsCascade: Boolean(cascadeGrouping.length),
-        },
-      })
-    );
+    if (!cascadeGrouping.length) {
+      internalState.dispatch(
+        injectCurrentTab(internalStateActions.setLayoutUiState)({
+          layoutUiState: {
+            ...(currentTabState.uiState?.layout ?? {}),
+            cascadeEnabled: false,
+          },
+        })
+      );
+    }
 
     internalState.dispatch(
       injectCurrentTab(internalStateActions.setCascadeUiState)({
         cascadeUiState: {
-          availableCascadeGroups: currentTabState.uiState.cascade!.availableCascadeGroups,
+          availableCascadeGroups: currentTabState.uiState.cascade!.availableCascadeGroups.slice(0),
           selectedCascadeGroups: cascadeGrouping,
         },
       })
