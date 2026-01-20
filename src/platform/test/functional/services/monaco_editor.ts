@@ -364,4 +364,10 @@ export class MonacoEditorService extends FtrService {
       return editor?.getModel()?.getValue() ?? '';
     }, cssSelector);
   }
+
+  public getCodeEditorSuggestWidget() {
+    return this.findService.byCssSelector(
+      '[data-test-subj="kbnCodeEditorEditorOverflowWidgetsContainer"] .suggest-widget'
+    );
+  }
 }
