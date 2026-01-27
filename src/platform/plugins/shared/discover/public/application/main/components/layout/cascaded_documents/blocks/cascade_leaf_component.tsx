@@ -9,6 +9,8 @@
 
 import { css } from '@emotion/react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useStickyHeaderPortal } from '@kbn/shared-ux-document-data-cascade';
 import {
   EuiPanel,
   EuiText,
@@ -53,6 +55,7 @@ interface CustomCascadeGridBodyProps
   isFullScreenMode?: boolean;
   initialOffset: () => number;
   data: DataTableRecord[];
+  renderCustomToolbarElements: ReturnType<typeof getRenderCustomToolbarWithElements>;
 }
 
 const getCustomCascadeGridBodyStyle = (euiTheme: UseEuiTheme['euiTheme']) => ({
@@ -112,6 +115,7 @@ export const CustomCascadeGridBodyMemoized = React.memo(function CustomCascadeGr
   visibleRowData,
   headerRow,
   footerRow,
+  renderCustomToolbarElements,
 }: CustomCascadeGridBodyProps) {
   const visibleRows = useMemo(
     () => data.slice(visibleRowData.startRow, visibleRowData.endRow),
@@ -120,6 +124,8 @@ export const CustomCascadeGridBodyMemoized = React.memo(function CustomCascadeGr
   const customGridBodyScrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   const { euiTheme } = useEuiTheme();
+
+  const stickyHeaderPortal = useStickyHeaderPortal();
 
   const customCascadeGridBodyStyle = useMemo(
     () => getCustomCascadeGridBodyStyle(euiTheme),
@@ -170,7 +176,27 @@ export const CustomCascadeGridBodyMemoized = React.memo(function CustomCascadeGr
       role="rowgroup"
       css={customCascadeGridBodyStyle.wrapper}
     >
-      <>{headerRow}</>
+      <>
+        {stickyHeaderPortal?.isActiveSticky && stickyHeaderPortal.portalRef.current
+          ? createPortal(
+              <>
+                {renderCustomToolbarElements({
+                  // toolbarProps: {
+                  //   hasRoomForGridControls: true,
+                  //   columnControl: true,
+                  //   columnSortingControl: true,
+                  //   fullScreenControl: true,
+                  //   keyboardShortcutsControl: true,
+                  //   displayControl: true,
+                  // },
+                  // gridProps: {},
+                })}
+                {headerRow}
+              </>,
+              stickyHeaderPortal.portalRef.current
+            )
+          : headerRow}
+      </>
       <div
         ref={customGridBodyScrollContainerRef}
         css={customCascadeGridBodyStyle.virtualizerContainer}
@@ -250,6 +276,12 @@ export const ESQLDataCascadeLeafCell = React.memo(
 
     const [isCellInFullScreenMode, setIsCellInFullScreenMode] = useState(false);
 
+    const setExpandedDocFn = useCallback(
+      (...args: Parameters<NonNullable<UnifiedDataTableProps['setExpandedDoc']>>) =>
+        setExpandedDoc(args[0]),
+      [setExpandedDoc]
+    );
+
     const renderCustomToolbarWithElements = useMemo(
       () =>
         getRenderCustomToolbarWithElements({
@@ -268,22 +300,19 @@ export const ESQLDataCascadeLeafCell = React.memo(
       [cellData]
     );
 
-    const setExpandedDocFn = useCallback(
-      (...args: Parameters<NonNullable<UnifiedDataTableProps['setExpandedDoc']>>) =>
-        setExpandedDoc(args[0]),
-      [setExpandedDoc]
-    );
-
     const renderCustomCascadeGridBodyCallback = useCallback(
-      ({
-        Cell,
-        visibleColumns,
-        visibleRowData,
-        setCustomGridBodyProps,
-        gridWidth,
-        headerRow,
-        footerRow,
-      }: EuiDataGridCustomBodyProps) => (
+      (
+        {
+          Cell,
+          visibleColumns,
+          visibleRowData,
+          setCustomGridBodyProps,
+          gridWidth,
+          headerRow,
+          footerRow,
+        }: EuiDataGridCustomBodyProps,
+        context: UnifiedDataTableCustomGridBodyContext
+      ) => (
         <CustomCascadeGridBodyMemoized
           key={isCellInFullScreenMode ? `full-screen-${cellId}` : cellId}
           Cell={Cell}
@@ -298,6 +327,7 @@ export const ESQLDataCascadeLeafCell = React.memo(
           getScrollElement={getScrollElement}
           initialOffset={getScrollOffset}
           isFullScreenMode={isCellInFullScreenMode}
+          renderCustomToolbarElements={context.renderToolbar}
         />
       ),
       [cellData, cellId, getScrollElement, getScrollMargin, getScrollOffset, isCellInFullScreenMode]
