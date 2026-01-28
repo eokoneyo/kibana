@@ -28,6 +28,7 @@ import type {
   EuiDataGridStyle,
   EuiDataGridProps,
   EuiDataGridToolBarVisibilityDisplaySelectorOptions,
+  EuiDataGridToolbarProps,
 } from '@elastic/eui';
 import {
   EuiDataGrid,
@@ -130,14 +131,6 @@ export enum DataLoadingState {
   loading = 'loading',
   loadingMore = 'loadingMore',
   loaded = 'loaded',
-}
-
-export interface UnifiedDataTableCustomGridBodyContext {
-  /**
-   * Renders the toolbar with actual EUI DataGrid controls.
-   * Call this inside your custom grid body to render the toolbar.
-   */
-  renderToolbar?: (toolbarProps: EuiDataGridCustomToolbarProps) => React.ReactNode;
 }
 
 /**
@@ -394,7 +387,7 @@ interface InternalUnifiedDataTableProps {
    */
   renderCustomGridBody?: (
     args: EuiDataGridCustomBodyProps,
-    context: UnifiedDataTableCustomGridBodyContext
+    context: Pick<EuiDataGridToolbarProps, 'renderCustomToolbar'>
   ) => React.ReactNode;
   /**
    * Optional render for the grid toolbar
@@ -1182,9 +1175,12 @@ const InternalUnifiedDataTable = React.forwardRef<
     const wrappedRenderCustomGridBody = useMemo(() => {
       if (!renderCustomGridBody) return undefined;
 
+      // This allows us to pass functions internal
+      // to the data table to be accessible within the custom grid body,
+      // for example the toolbar rendering function
       return (euiCustomGridBodyProps: EuiDataGridCustomBodyProps) => {
         return renderCustomGridBody(euiCustomGridBodyProps, {
-          renderToolbar: renderCustomToolbarFn,
+          renderCustomToolbar: renderCustomToolbarFn,
         });
       };
     }, [renderCustomGridBody, renderCustomToolbarFn]);
