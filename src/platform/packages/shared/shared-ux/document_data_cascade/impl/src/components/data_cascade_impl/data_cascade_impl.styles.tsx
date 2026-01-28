@@ -48,6 +48,18 @@ export const dataCascadeImplStyles = (euiTheme: UseEuiTheme['euiTheme']) => ({
       animation: `${slideIn} ${euiTheme.animation.slow} ${euiTheme.animation.resistance}`,
     },
   }),
+  // Hidden variant - keeps the element in DOM so ref is always available,
+  // but visually hidden and non-interactive
+  cascadeTreeGridHeaderStickyRenderSlotHidden: css({
+    position: 'sticky',
+    top: 0,
+    left: 0,
+    right: 0,
+    visibility: 'hidden',
+    pointerEvents: 'none',
+    height: 0,
+    overflow: 'hidden',
+  }),
   cascadeTreeGridWrapper: css({
     background: euiTheme.colors.backgroundBaseSubdued,
 
