@@ -26,6 +26,9 @@ const slideIn = keyframes({
 export const dataCascadeImplStyles = (euiTheme: UseEuiTheme['euiTheme']) => ({
   container: css({
     flex: '1 1 auto',
+    // Creates a new stacking context to prevent z-index values
+    // from the virtualized rows from bleeding out to other elements
+    isolation: 'isolate',
   }),
   containerInner: css([relativePosition, { height: '100%' }]),
   cascadeTreeGridBlock: css([

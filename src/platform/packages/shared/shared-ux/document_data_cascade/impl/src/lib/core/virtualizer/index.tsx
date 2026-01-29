@@ -193,14 +193,22 @@ export const useCascadeVirtualizer = <G extends GroupNode>({
 };
 
 /**
- * @description returns the position style for the grid row, in relation to the scrolled virtualized row
+ * @description returns the position style for the grid row, in relation to the scrolled virtualized row.
+ * Z-index is calculated as (visibleRowCount - renderIndex) to ensure rows higher in the list
+ * have higher z-index values. This prevents visual glitches during row expansion where
+ * unmeasured rows below might briefly appear over the expanding row.
  */
 export const getGridRowPositioningStyle = (
   renderIndex: number,
-  virtualizedRowComputedTranslateValueMap: Map<number, number>
+  virtualizedRowComputedTranslateValueMap: Map<number, number>,
+  visibleRowCount: number
 ): CSSProperties => {
   return {
     transform: `translateY(${virtualizedRowComputedTranslateValueMap.get(renderIndex) ?? 0}px)`,
+    // we do this so that during the transition of switching between the row skeleton and the row content
+    // the row content will always be placed above the next row,
+    // when the new row height has not be measured yet
+    zIndex: visibleRowCount - renderIndex,
   };
 };
 
@@ -226,7 +234,9 @@ export function VirtualizedCascadeRowList<G extends GroupNode>({
   rows,
   listItemRenderer,
 }: VirtualizedCascadeListProps<G>) {
-  return getVirtualItems().map(function buildCascadeRows(virtualItem, renderIndex) {
+  const virtualItems = getVirtualItems();
+
+  return virtualItems.map(function buildCascadeRows(virtualItem, renderIndex) {
     const row = rows[virtualItem.index];
 
     const isActiveSticky = activeStickyIndex === virtualItem.index;
@@ -243,7 +253,8 @@ export function VirtualizedCascadeRowList<G extends GroupNode>({
           virtualItem,
           virtualRowStyle: getGridRowPositioningStyle(
             renderIndex,
-            virtualizedRowComputedTranslateValue
+            virtualizedRowComputedTranslateValue,
+            virtualItems.length
           ),
         })}
       </Fragment>
