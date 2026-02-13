@@ -68,6 +68,7 @@ export const DataCascadeImpl = forwardRef(function DataCascadeImpl<
     enableRowSelection = false,
     enableStickyGroupHeader = true,
     allowMultipleRowToggle = false,
+    initialScrollOffset,
   }: DataCascadeImplProps<G, L>,
   ref: React.Ref<DataCascadeImplRef>
 ) {
@@ -152,6 +153,7 @@ export const DataCascadeImpl = forwardRef(function DataCascadeImpl<
     enableStickyGroupHeader,
     estimatedRowHeight: size === 's' ? 32 : size === 'm' ? 40 : 48,
     onStateChange: collectVirtualizerStateChanges,
+    initialOffset: initialScrollOffset,
   });
 
   const {
