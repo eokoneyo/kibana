@@ -7,7 +7,7 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { Children, isValidElement, useRef, useMemo, useCallback } from 'react';
+import React, { Children, isValidElement, useRef, useMemo, useCallback, forwardRef } from 'react';
 import {
   EuiAutoSizer,
   EuiFlexGroup,
@@ -26,6 +26,7 @@ import {
   calculateActiveStickyIndex,
   type VirtualizedCascadeListProps,
 } from '../../lib/core/virtualizer';
+import { useExposePublicApi, type DataCascadeImplRef } from '../../lib/core/api';
 import {
   useRegisterCascadeAccessibilityHelpers,
   useTreeGridContainerARIAAttributes,
@@ -52,18 +53,24 @@ export const DataCascadeRow = <G extends GroupNode, L extends LeafNode>(
   return null;
 };
 
-export function DataCascadeImpl<G extends GroupNode, L extends LeafNode>({
-  data,
-  onCascadeGroupingChange,
-  size = 'm',
-  tableTitleSlot: TableTitleSlot,
-  customTableHeader,
-  overscan = 10,
-  children,
-  enableRowSelection = false,
-  enableStickyGroupHeader = true,
-  allowMultipleRowToggle = false,
-}: DataCascadeImplProps<G, L>) {
+export const DataCascadeImpl = forwardRef(function DataCascadeImpl<
+  G extends GroupNode,
+  L extends LeafNode
+>(
+  {
+    data,
+    onCascadeGroupingChange,
+    size = 'm',
+    tableTitleSlot: TableTitleSlot,
+    customTableHeader,
+    overscan = 10,
+    children,
+    enableRowSelection = false,
+    enableStickyGroupHeader = true,
+    allowMultipleRowToggle = false,
+  }: DataCascadeImplProps<G, L>,
+  ref: React.Ref<DataCascadeImplRef>
+) {
   const rowElement = Children.only(children);
 
   if (!isValidElement(rowElement) || rowElement.type !== DataCascadeRow) {
@@ -132,6 +139,11 @@ export function DataCascadeImpl<G extends GroupNode, L extends LeafNode>({
     rowCell: cascadeRowCell,
   });
 
+  const { collectVirtualizerStateChanges } = useExposePublicApi<G, L>(ref, {
+    rows,
+    enableStickyGroupHeader,
+  });
+
   // persist the virtualizer instance to ref, so that invocations of getVirtualizer will always return the latest instance
   virtualizerInstance.current = useCascadeVirtualizer<G>({
     rows,
@@ -139,6 +151,7 @@ export function DataCascadeImpl<G extends GroupNode, L extends LeafNode>({
     getScrollElement,
     enableStickyGroupHeader,
     estimatedRowHeight: size === 's' ? 32 : size === 'm' ? 40 : 48,
+    onStateChange: collectVirtualizerStateChanges,
   });
 
   const {
@@ -160,6 +173,7 @@ export function DataCascadeImpl<G extends GroupNode, L extends LeafNode>({
     enableStickyGroupHeader
   );
 
+  // register handlers for accessibility
   useRegisterCascadeAccessibilityHelpers<G>({
     tableRows: rows,
     tableWrapperElement: cascadeWrapperRef.current!,
@@ -249,4 +263,4 @@ export function DataCascadeImpl<G extends GroupNode, L extends LeafNode>({
       </EuiFlexGroup>
     </div>
   );
-}
+});

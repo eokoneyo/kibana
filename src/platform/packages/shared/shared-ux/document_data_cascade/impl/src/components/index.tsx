@@ -7,26 +7,42 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import React, { type ComponentProps } from 'react';
+import React, { forwardRef, type ComponentProps } from 'react';
 import { DataCascadeImpl, type DataCascadeImplProps } from './data_cascade_impl';
+import type { DataCascadeImplRef } from '../lib/core/api';
 import { DataCascadeProvider, type GroupNode, type LeafNode } from '../store_provider';
 
-export type { GroupNode, LeafNode, DataCascadeImplProps as DataCascadeProps };
+export type { GroupNode, LeafNode, DataCascadeImplProps as DataCascadeProps, DataCascadeImplRef };
+
 export { DataCascadeRow, DataCascadeRowCell } from './data_cascade_impl';
+
 export type {
   DataCascadeRowProps,
   DataCascadeRowCellProps,
   CascadeRowCellNestedVirtualizationAnchorProps,
 } from './data_cascade_impl';
 
-export function DataCascade<G extends GroupNode = GroupNode, L extends LeafNode = LeafNode>({
-  cascadeGroups,
-  initialGroupColumn,
-  ...props
-}: DataCascadeImplProps<G, L> & ComponentProps<typeof DataCascadeProvider>) {
+type DataCascadeProviderProps = ComponentProps<typeof DataCascadeProvider>;
+
+const DataCascadeWithRef = forwardRef<
+  DataCascadeImplRef,
+  DataCascadeImplProps<GroupNode, LeafNode> & DataCascadeProviderProps
+>(function DataCascade({ cascadeGroups, initialGroupColumn, ...props }, ref) {
   return (
     <DataCascadeProvider cascadeGroups={cascadeGroups} initialGroupColumn={initialGroupColumn}>
-      <DataCascadeImpl<G, L> {...props} />
+      <DataCascadeImpl ref={ref} {...props} />
     </DataCascadeProvider>
   );
-}
+});
+
+/**
+ * Public data cascade component. Forwards the ref to DataCascadeImpl so consumers
+ * receive the imperative handle (getStateStore) on the ref.
+ */
+export const DataCascade = DataCascadeWithRef as <
+  G extends GroupNode = GroupNode,
+  L extends LeafNode = LeafNode
+>(
+  props: DataCascadeImplProps<G, L> &
+    DataCascadeProviderProps & { ref?: React.Ref<DataCascadeImplRef> }
+) => React.ReactElement;
