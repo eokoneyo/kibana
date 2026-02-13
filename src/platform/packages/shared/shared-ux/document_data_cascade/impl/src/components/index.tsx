@@ -27,9 +27,16 @@ type DataCascadeProviderProps = ComponentProps<typeof DataCascadeProvider>;
 const DataCascadeWithRef = forwardRef<
   DataCascadeImplRef,
   DataCascadeImplProps<GroupNode, LeafNode> & DataCascadeProviderProps
->(function DataCascade({ cascadeGroups, initialGroupColumn, ...props }, ref) {
+>(function DataCascade(
+  { cascadeGroups, initialGroupColumn, initialExpandedRowIds, ...props },
+  ref
+) {
   return (
-    <DataCascadeProvider cascadeGroups={cascadeGroups} initialGroupColumn={initialGroupColumn}>
+    <DataCascadeProvider
+      cascadeGroups={cascadeGroups}
+      initialGroupColumn={initialGroupColumn}
+      initialExpandedRowIds={initialExpandedRowIds}
+    >
       <DataCascadeImpl ref={ref} {...props} />
     </DataCascadeProvider>
   );
