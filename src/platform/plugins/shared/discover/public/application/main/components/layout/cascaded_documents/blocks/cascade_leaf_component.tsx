@@ -36,6 +36,8 @@ interface ESQLDataCascadeLeafCellProps
       | 'renderDocumentView'
       | 'externalCustomRenderers'
       | 'onUpdateDataGridDensity'
+      | 'initialState'
+      | 'onInitialStateChange'
     >,
     Pick<
       Parameters<DataCascadeRowCellProps<ESQLDataGroupNode, DataTableRecord>['children']>[0],
@@ -162,10 +164,12 @@ export const ESQLDataCascadeLeafCell = React.memo(
     showTimeCol,
     dataView,
     showKeyboardShortcuts,
-    renderDocumentView,
     externalCustomRenderers,
     virtualizerController,
     rowIndex,
+    initialState,
+    onInitialStateChange,
+    renderDocumentView,
     onUpdateDataGridDensity,
   }: ESQLDataCascadeLeafCellProps) => {
     const services = useDiscoverServices();
@@ -252,6 +256,7 @@ export const ESQLDataCascadeLeafCell = React.memo(
         isSortEnabled={false}
         enableInTableSearch
         ariaLabelledBy="data-cascade-leaf-cell"
+        // TODO: I think this will pollute local storage
         consumer={`discover_esql_cascade_row_leaf_${cellId}`}
         rows={cellData}
         loadingState={DataLoadingState.loaded}
@@ -268,6 +273,8 @@ export const ESQLDataCascadeLeafCell = React.memo(
         externalCustomRenderers={externalCustomRenderers}
         paginationMode="infinite"
         sampleSizeState={cellData.length}
+        initialState={initialState}
+        onInitialStateChange={onInitialStateChange}
       />
     );
   }
