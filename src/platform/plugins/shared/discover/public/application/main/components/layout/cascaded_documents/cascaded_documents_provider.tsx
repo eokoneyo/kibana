@@ -12,7 +12,7 @@ import type { ESQLControlVariable } from '@kbn/esql-types';
 import type { ReactElement } from 'react';
 import { createContext, useContext } from 'react';
 import type { DataTableRecord } from '@kbn/discover-utils';
-import type { DataCascadeUISnapshot } from '@kbn/shared-ux-document-data-cascade';
+import type { DataCascadeUISnapshot } from '@kbn/shared-ux-document-data-cascade/src/components';
 import type { UnifiedDataTableRestorableState } from '@kbn/unified-data-table';
 import type {
   CascadedDocumentsState,
@@ -25,9 +25,16 @@ import type { ESQLDataGroupNode } from './blocks';
 
 export type DataCascadeUiState = DataCascadeUISnapshot<ESQLDataGroupNode, DataTableRecord>;
 
+export type CascadedDocumentsDataGridUiState = UnifiedDataTableRestorableState & {
+  virtualizationMetadata: {
+    initialDisplayedItemIndex: number;
+    scrollRect: { width: number; height: number };
+  };
+};
+
 export type CascadedDocumentsDataGridUiStateMap = Record<
   string,
-  Partial<UnifiedDataTableRestorableState>
+  Partial<CascadedDocumentsDataGridUiState>
 >;
 
 export interface CascadedDocumentsContext
@@ -39,8 +46,8 @@ export interface CascadedDocumentsContext
   viewModeToggle: ReactElement | undefined;
   getDataCascadeUiState: () => DataCascadeUiState | undefined;
   getDataGridUiStateMap: () => CascadedDocumentsDataGridUiStateMap | undefined;
-  setDataCascadeUiState: (uiState: DataCascadeUiState) => void;
-  setDataGridUiState: (nodeId: string, uiState: Partial<UnifiedDataTableRestorableState>) => void;
+  setDataCascadeUiState: (uiState: DataCascadeUiState | undefined) => void;
+  setDataGridUiState: (nodeId: string, uiState: Partial<CascadedDocumentsDataGridUiState>) => void;
   cascadeGroupingChangeHandler: (cascadeGrouping: string[]) => void;
   onUpdateESQLQuery: UpdateESQLQueryFn;
   openInNewTab: (...args: Parameters<typeof internalStateActions.openInNewTab>) => void;
