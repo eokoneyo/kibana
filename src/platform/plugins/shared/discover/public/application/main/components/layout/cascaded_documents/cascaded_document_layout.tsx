@@ -62,8 +62,8 @@ const ESQLDataCascade = React.memo(
       selectedCascadeGroups,
       esqlVariables,
       viewModeToggle,
-      dataCascadeUiState,
-      dataGridUiStateMap,
+      getDataCascadeUiState,
+      getDataGridUiStateMap,
       setDataCascadeUiState,
       setDataGridUiState,
       cascadeGroupingChangeHandler,
@@ -113,7 +113,7 @@ const ESQLDataCascade = React.memo(
       ({ data: cellData, cellId, virtualizerController, rowIndex }) => (
         <ESQLDataCascadeLeafCell
           {...props}
-          initialState={dataGridUiStateMap?.[cellId]}
+          initialState={getDataGridUiStateMap()?.[cellId]}
           onInitialStateChange={(initialState) => {
             setDataGridUiState(cellId, initialState);
           }}
@@ -124,15 +124,15 @@ const ESQLDataCascade = React.memo(
           rowIndex={rowIndex}
         />
       ),
-      [dataGridUiStateMap, dataView, props, setDataGridUiState]
+      [getDataGridUiStateMap, dataView, props, setDataGridUiState]
     );
 
     const initialTableState = useMemo<ComponentProps<EsqlDataCascade>['initialTableState']>(
       () => ({
-        expanded: dataCascadeUiState?.expanded,
-        rowSelection: dataCascadeUiState?.rowSelection,
+        expanded: getDataCascadeUiState()?.expanded,
+        rowSelection: getDataCascadeUiState()?.rowSelection,
       }),
-      [dataCascadeUiState]
+      [getDataCascadeUiState]
     );
 
     const latestSetDataCascadeUiState = useLatest(setDataCascadeUiState);
@@ -166,9 +166,9 @@ const ESQLDataCascade = React.memo(
         data={cascadeGroupData}
         cascadeGroups={availableCascadeGroups}
         initialGroupColumn={selectedCascadeGroups}
-        initialScrollOffset={dataCascadeUiState?.scrollOffset}
+        initialScrollOffset={getDataCascadeUiState()?.scrollOffset}
         initialTableState={initialTableState}
-        initialRect={dataCascadeUiState?.scrollRect}
+        initialRect={getDataCascadeUiState()?.scrollRect}
         customTableHeader={customTableHeading}
       >
         <DataCascadeRow<ESQLDataGroupNode, DataTableRecord>
