@@ -25,7 +25,6 @@ import { FormattedMessage } from '@kbn/i18n-react';
 import { useDiscoverServices } from '../../../../../../hooks/use_discover_services';
 import { getCustomCascadeGridBodyStyle } from './cascade_leaf_component.styles';
 import type { ESQLDataGroupNode } from './types';
-import type { CascadedDocumentsDataGridUiState } from '../cascaded_documents_provider';
 import { useCascadedDocumentsContext } from '../cascaded_documents_provider';
 
 interface ESQLDataCascadeLeafCellProps
@@ -167,8 +166,8 @@ export const ESQLDataCascadeLeafCell = React.memo(
     externalCustomRenderers,
     virtualizerController,
     rowIndex,
-    renderDocumentView,
     onUpdateDataGridDensity,
+    renderDocumentView,
   }: ESQLDataCascadeLeafCellProps) => {
     const services = useDiscoverServices();
     const [expandedDoc, setExpandedDoc] = useState<DataTableRecord | undefined>();
@@ -182,23 +181,11 @@ export const ESQLDataCascadeLeafCell = React.memo(
       return getDataGridUiStateMap()?.[cellId];
     }, [cellId, getDataGridUiStateMap]);
 
-    const initialVirtualizationMetadata = useRef<
-      CascadedDocumentsDataGridUiState['virtualizationMetadata']
-    >(
-      initialGridState?.virtualizationMetadata ?? {
-        initialDisplayedItemIndex: 0,
-        scrollRect: { width: 0, height: 0 },
-      }
-    );
-
     const onInitialStateChange = useCallback<
       NonNullable<UnifiedDataTableProps['onInitialStateChange']>
     >(
       (newInitialGridState) => {
-        setDataGridUiState(cellId, {
-          ...newInitialGridState,
-          virtualizationMetadata: initialVirtualizationMetadata.current,
-        });
+        setDataGridUiState(cellId, newInitialGridState);
       },
       [cellId, setDataGridUiState]
     );
