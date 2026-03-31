@@ -22,6 +22,7 @@ import {
 } from '@kbn/shared-ux-document-data-cascade';
 import type { DataTableRecord, SortOrder } from '@kbn/discover-utils';
 import { FormattedMessage } from '@kbn/i18n-react';
+import useObservable from 'react-use/lib/useObservable';
 import { useDiscoverServices } from '../../../../../../hooks/use_discover_services';
 import { getCustomCascadeGridBodyStyle } from './cascade_leaf_component.styles';
 import type { ESQLDataGroupNode } from './types';
@@ -34,7 +35,6 @@ interface ESQLDataCascadeLeafCellProps
       | 'showTimeCol'
       | 'dataView'
       | 'showKeyboardShortcuts'
-      | 'renderDocumentView'
       | 'externalCustomRenderers'
       | 'onUpdateDataGridDensity'
     >,
@@ -170,7 +170,23 @@ export const ESQLDataCascadeLeafCell = React.memo(
     renderDocumentView,
   }: ESQLDataCascadeLeafCellProps) => {
     const services = useDiscoverServices();
-    const [expandedDoc, setExpandedDoc] = useState<DataTableRecord | undefined>();
+    const {
+      expandedDoc$,
+      expandedDocOwner$,
+      getExpandedDocSetter,
+      getRenderDocumentViewMetaSetter,
+    } = useCascadedDocumentsContext();
+    const expandedDoc = useObservable(expandedDoc$, expandedDoc$.getValue());
+    const expandedDocOwner = useObservable(expandedDocOwner$, expandedDocOwner$.getValue());
+    const setExpandedDoc = useMemo(
+      () => getExpandedDocSetter(cellId),
+      [cellId, getExpandedDocSetter]
+    );
+    const setRenderDocumentViewMeta = useMemo(
+      () => getRenderDocumentViewMetaSetter(cellId),
+      [cellId, getRenderDocumentViewMetaSetter]
+    );
+
     const [cascadeDataGridDensityState, setCascadeDataGridDensityState] = useState<DataGridDensity>(
       dataGridDensityState ?? DataGridDensity.COMPACT
     );
@@ -202,12 +218,6 @@ export const ESQLDataCascadeLeafCell = React.memo(
     }, [cascadeDataGridDensityState, onUpdateDataGridDensity]);
 
     const [isCellInFullScreenMode, setIsCellInFullScreenMode] = useState(false);
-
-    const setExpandedDocFn = useCallback(
-      (...args: Parameters<NonNullable<UnifiedDataTableProps['setExpandedDoc']>>) =>
-        setExpandedDoc(args[0]),
-      [setExpandedDoc]
-    );
 
     const renderCustomToolbarWithElements = useMemo(
       () =>
@@ -276,11 +286,12 @@ export const ESQLDataCascadeLeafCell = React.memo(
         columns={selectedColumns}
         onSetColumns={setSelectedColumns}
         renderCustomToolbar={renderCustomToolbarWithElements}
-        expandedDoc={expandedDoc}
-        setExpandedDoc={setExpandedDocFn}
+        expandedDoc={expandedDocOwner === cellId ? expandedDoc : undefined}
+        setExpandedDoc={setExpandedDoc}
         dataGridDensityState={cascadeDataGridDensityState}
         onUpdateDataGridDensity={setCascadeDataGridDensityState}
-        renderDocumentView={renderDocumentView}
+        renderDocumentView="external"
+        setRenderDocumentViewMeta={setRenderDocumentViewMeta}
         renderCustomGridBody={renderCustomCascadeGridBodyCallback}
         onFullScreenChange={setIsCellInFullScreenMode}
         externalCustomRenderers={externalCustomRenderers}

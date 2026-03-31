@@ -13,6 +13,9 @@ import type { ReactElement } from 'react';
 import { createContext, useContext } from 'react';
 import type { DataCascadeRestorableState } from '@kbn/shared-ux-document-data-cascade';
 import type { UnifiedDataTableRestorableState } from '@kbn/unified-data-table';
+import type { BehaviorSubject } from 'rxjs';
+import type { DataTableRecord } from '@kbn/discover-utils';
+import type { UnifiedDataTableProps } from '@kbn/unified-data-table';
 import type {
   CascadedDocumentsState,
   DiscoverAppState,
@@ -46,6 +49,12 @@ export interface CascadedDocumentsContext
   getDataGridUiStateMap: () => CascadedDocumentsDataGridUiStateMap | undefined;
   setDataCascadeUiState: (uiState: DataCascadeUiState | undefined) => void;
   setDataGridUiState: (nodeId: string, uiState: Partial<UnifiedDataTableRestorableState>) => void;
+  expandedDoc$: BehaviorSubject<DataTableRecord | undefined>;
+  expandedDocOwner$: BehaviorSubject<string | undefined>;
+  getExpandedDocSetter: (owner: string) => NonNullable<UnifiedDataTableProps['setExpandedDoc']>;
+  getRenderDocumentViewMetaSetter: (
+    owner: string
+  ) => UnifiedDataTableProps['setRenderDocumentViewMeta'] | undefined;
   cascadeGroupingChangeHandler: (cascadeGrouping: string[]) => void;
   onUpdateESQLQuery: UpdateESQLQueryFn;
   openInNewTab: (...args: Parameters<typeof internalStateActions.openInNewTab>) => void;
