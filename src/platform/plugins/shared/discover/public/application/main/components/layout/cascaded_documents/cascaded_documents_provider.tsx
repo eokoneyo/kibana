@@ -11,6 +11,8 @@ import { isOfAggregateQueryType, type AggregateQuery, type TimeRange } from '@kb
 import type { ESQLControlVariable } from '@kbn/esql-types';
 import type { ReactElement } from 'react';
 import { createContext, useContext } from 'react';
+import type { DataCascadeRestorableState } from '@kbn/shared-ux-document-data-cascade';
+import type { UnifiedDataTableRestorableState } from '@kbn/unified-data-table';
 import type {
   CascadedDocumentsState,
   DiscoverAppState,
@@ -19,6 +21,20 @@ import type {
 import type { UpdateESQLQueryFn } from '../../../../../context_awareness';
 import type { CascadedDocumentsFetcher } from '../../../data_fetching/cascaded_documents_fetcher';
 
+export type DataCascadeUiState = DataCascadeRestorableState;
+
+export type CascadedDocumentsDataGridUiState = UnifiedDataTableRestorableState & {
+  virtualizationMetadata: {
+    initialDisplayedItemIndex: number;
+    scrollRect: { width: number; height: number };
+  };
+};
+
+export type CascadedDocumentsDataGridUiStateMap = Record<
+  string,
+  Partial<CascadedDocumentsDataGridUiState>
+>;
+
 export interface CascadedDocumentsContext
   extends Pick<CascadedDocumentsState, 'availableCascadeGroups' | 'selectedCascadeGroups'> {
   cascadedDocumentsFetcher: CascadedDocumentsFetcher;
@@ -26,6 +42,10 @@ export interface CascadedDocumentsContext
   esqlVariables: ESQLControlVariable[] | undefined;
   timeRange: TimeRange | undefined;
   viewModeToggle: ReactElement | undefined;
+  getDataCascadeUiState: () => DataCascadeUiState | undefined;
+  getDataGridUiStateMap: () => CascadedDocumentsDataGridUiStateMap | undefined;
+  setDataCascadeUiState: (uiState: DataCascadeUiState | undefined) => void;
+  setDataGridUiState: (nodeId: string, uiState: Partial<UnifiedDataTableRestorableState>) => void;
   cascadeGroupingChangeHandler: (cascadeGrouping: string[]) => void;
   onUpdateESQLQuery: UpdateESQLQueryFn;
   openInNewTab: (...args: Parameters<typeof internalStateActions.openInNewTab>) => void;

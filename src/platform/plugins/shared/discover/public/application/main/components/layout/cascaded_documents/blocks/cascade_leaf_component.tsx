@@ -25,6 +25,7 @@ import { FormattedMessage } from '@kbn/i18n-react';
 import { useDiscoverServices } from '../../../../../../hooks/use_discover_services';
 import { getCustomCascadeGridBodyStyle } from './cascade_leaf_component.styles';
 import type { ESQLDataGroupNode } from './types';
+import { useCascadedDocumentsContext } from '../cascaded_documents_provider';
 
 interface ESQLDataCascadeLeafCellProps
   extends Pick<
@@ -162,16 +163,32 @@ export const ESQLDataCascadeLeafCell = React.memo(
     showTimeCol,
     dataView,
     showKeyboardShortcuts,
-    renderDocumentView,
     externalCustomRenderers,
     virtualizerController,
     rowIndex,
     onUpdateDataGridDensity,
+    renderDocumentView,
   }: ESQLDataCascadeLeafCellProps) => {
     const services = useDiscoverServices();
     const [expandedDoc, setExpandedDoc] = useState<DataTableRecord | undefined>();
     const [cascadeDataGridDensityState, setCascadeDataGridDensityState] = useState<DataGridDensity>(
       dataGridDensityState ?? DataGridDensity.COMPACT
+    );
+
+    const { getDataGridUiStateMap, setDataGridUiState } = useCascadedDocumentsContext();
+
+    const initialGridState = useMemo(
+      () => getDataGridUiStateMap()?.[cellId],
+      [cellId, getDataGridUiStateMap]
+    );
+
+    const onInitialStateChange = useCallback<
+      NonNullable<UnifiedDataTableProps['onInitialStateChange']>
+    >(
+      (newInitialGridState) => {
+        setDataGridUiState(cellId, newInitialGridState);
+      },
+      [cellId, setDataGridUiState]
     );
 
     // TODO: Implement column selection logic,
@@ -252,6 +269,7 @@ export const ESQLDataCascadeLeafCell = React.memo(
         isSortEnabled={false}
         enableInTableSearch
         ariaLabelledBy="data-cascade-leaf-cell"
+        // TODO: I think this will pollute local storage
         consumer={`discover_esql_cascade_row_leaf_${cellId}`}
         rows={cellData}
         loadingState={DataLoadingState.loaded}
@@ -268,6 +286,8 @@ export const ESQLDataCascadeLeafCell = React.memo(
         externalCustomRenderers={externalCustomRenderers}
         paginationMode="infinite"
         sampleSizeState={cellData.length}
+        initialState={initialGridState}
+        onInitialStateChange={onInitialStateChange}
       />
     );
   }
