@@ -28,6 +28,33 @@ declare module 'monaco-editor/esm/vs/editor/editor.api' {
     // add typing for exposing monaco on the MonacoEnvironment property
     monaco: typeof monaco;
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-namespace -- augment monaco editor types for better editor contribution typing
+  export namespace editor {
+    // Define overloads for the getContribution method to allow for better typing of the editor contributions
+    interface ICodeEditor {
+      getContribution(id: 'editor.contrib.suggestController'):
+        | (editor.IEditorContribution & {
+            // add type augmentation for the suggestController contribution for the widget property
+            widget?: {
+              value?: {
+                // these methods are not documented in monaco but are available on the vscode upstream,
+                // see https://github.com/microsoft/vscode/blob/main/src/vs/editor/contrib/suggest/browser/suggestWidget.ts#L146-L147
+                onDidHide?: (cb: () => void) => void;
+                onDidShow?: (cb: () => void) => void;
+              };
+            };
+          })
+        | null;
+      getContribution(id: 'editor.contrib.messageController'):
+        | (editor.IEditorContribution & {
+            // add type augmentation for the messageController contribution for the showMessage property, which is not documented in monaco but is available on the vscode upstream,
+            // see https://github.com/microsoft/vscode/blob/main/src/vs/editor/contrib/message/browser/messageController.ts#L62
+            showMessage?: (message: string, position: monaco.Position | null) => void;
+          })
+        | undefined;
+    }
+  }
 }
 
 const monacoBundleDir = (window as any).__kbnPublicPath__?.['kbn-monaco'];

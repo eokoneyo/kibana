@@ -542,55 +542,30 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         },
       });
 
-      let messageContribution:
-        | (monaco.editor.IEditorContribution & {
-            showMessage?: (message: string, position: monaco.Position | null) => void;
-          })
-        | undefined;
       try {
-        messageContribution = editor.getContribution(
-          'editor.contrib.messageController'
-        ) as typeof messageContribution;
-      } catch {
-        // Monaco internal contribution IDs can change across versions.
-        // Skip read-only inline messages if contribution is unavailable.
-      }
-      editor.onDidAttemptReadOnlyEdit(() => {
-        messageContribution?.showMessage?.(readOnlyMessage, editor.getPosition());
-      });
+        const messageContribution = editor.getContribution('editor.contrib.messageController');
 
-      let suggestionWidget:
-        | {
-            onDidShow?: (cb: () => void) => void;
-            onDidHide?: (cb: () => void) => void;
-          }
-        | undefined;
-      try {
-        const suggestionController = editor.getContribution('editor.contrib.suggestController') as
-          | (monaco.editor.IEditorContribution & {
-              widget?: {
-                value?: {
-                  onDidShow?: (cb: () => void) => void;
-                  onDidHide?: (cb: () => void) => void;
-                };
-              };
-            })
-          | undefined;
-        suggestionWidget = suggestionController?.widget?.value;
+        editor.onDidAttemptReadOnlyEdit(() => {
+          messageContribution?.showMessage?.(readOnlyMessage, editor.getPosition());
+        });
       } catch {
-        // Monaco internal contribution IDs can change across versions.
-        // Autocomplete-menu tracking is optional, so continue when unavailable.
+        // This is a guard for possible changes in the underlying lib, as we are leveraging undocumented APIs.
       }
 
-      // As I haven't found official documentation for "onDidShow" and "onDidHide"
-      // we guard from possible changes in the underlying lib
-      if (suggestionWidget && suggestionWidget.onDidShow && suggestionWidget.onDidHide) {
-        suggestionWidget.onDidShow(() => {
-          isSuggestionMenuOpen.current = true;
-        });
-        suggestionWidget.onDidHide(() => {
-          isSuggestionMenuOpen.current = false;
-        });
+      try {
+        const suggestionController = editor.getContribution('editor.contrib.suggestController');
+        const suggestionWidget = suggestionController?.widget?.value;
+
+        if (suggestionWidget && suggestionWidget.onDidShow && suggestionWidget.onDidHide) {
+          suggestionWidget.onDidShow(() => {
+            isSuggestionMenuOpen.current = true;
+          });
+          suggestionWidget.onDidHide(() => {
+            isSuggestionMenuOpen.current = false;
+          });
+        }
+      } catch {
+        // This is a guard for possible changes in the underlying lib, as we are leveraging undocumented APIs.
       }
 
       if (enableCustomContextMenu) {
