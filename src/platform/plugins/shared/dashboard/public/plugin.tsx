@@ -39,7 +39,10 @@ import { i18n } from '@kbn/i18n';
 import type { Start as InspectorStartContract } from '@kbn/inspector-plugin/public';
 import { replaceUrlHashQuery } from '@kbn/kibana-utils-plugin/common';
 import { createKbnUrlTracker } from '@kbn/kibana-utils-plugin/public';
-import type { NavigationPublicPluginStart } from '@kbn/navigation-plugin/public';
+import type {
+  NavigationPublicPluginSetup,
+  NavigationPublicPluginStart,
+} from '@kbn/navigation-plugin/public';
 import type { NoDataPagePluginStart } from '@kbn/no-data-page-plugin/public';
 import type {
   ObservabilityAIAssistantPublicSetup,
@@ -80,6 +83,7 @@ import {
 import { untilPluginStartServicesReady, setKibanaServices } from './services/kibana_services';
 import { setLogger } from './services/logger';
 import { registerActions } from './dashboard_actions/register_actions';
+import { registerNavExtensions } from './dashboard_nav_extensions/register_extensions';
 import { setupUrlForwarding } from './dashboard_app/url/setup_url_forwarding';
 import type { FindDashboardsService } from './dashboard_client';
 import { DASHBOARD_DURATION_START_MARK } from './dashboard_api/telemetry/dashboard_duration_start_mark';
@@ -98,6 +102,7 @@ export interface DashboardSetupDependencies {
   unifiedSearch: UnifiedSearchPublicPluginStart;
   observabilityAIAssistant?: ObservabilityAIAssistantPublicSetup;
   lens?: LensPublicSetup;
+  navigation: NavigationPublicPluginSetup;
 }
 
 export interface DashboardStartDependencies {
@@ -161,10 +166,11 @@ export class DashboardPlugin
   private currentHistory: ScopedHistory | undefined = undefined;
   private listingViewRegistry: Set<DashboardListingTab> = new Set();
   private dashboardAppApi$ = new BehaviorSubject<DashboardApi | undefined>(undefined);
+  private dashboardNavigationExtensions?: ReturnType<typeof registerNavExtensions>;
 
   public setup(
     core: CoreSetup<DashboardStartDependencies, DashboardStart>,
-    { embeddable, share, home, data, urlForwarding }: DashboardSetupDependencies
+    { embeddable, share, home, data, urlForwarding, navigation }: DashboardSetupDependencies
   ): DashboardSetup {
     core.analytics.registerEventType({
       eventType: 'dashboard_loaded_with_data',
@@ -330,6 +336,8 @@ export class DashboardPlugin
       return dashboardDrilldown;
     });
 
+    this.dashboardNavigationExtensions = registerNavExtensions({ navigation });
+
     return {
       registerListingPageTab: (tab: DashboardListingTab) => {
         this.listingViewRegistry.add(tab);
@@ -339,6 +347,8 @@ export class DashboardPlugin
 
   public start(core: CoreStart, plugins: DashboardStartDependencies): DashboardStart {
     setKibanaServices(core, plugins);
+
+    this.dashboardNavigationExtensions?.start(core);
 
     registerActions(plugins);
 
