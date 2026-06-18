@@ -25,6 +25,7 @@ dependsOn:
   - '@kbn/core-chrome-browser'
   - '@kbn/deeplinks-workflows'
   - '@kbn/navigation-plugin'
+  - '@kbn/dashboard-plugin'
 tags:
   - plugin
   - prod

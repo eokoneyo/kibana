@@ -12,16 +12,14 @@
     "id": "serverlessWorkplaceAI",
     "browser": true,
     "server": true,
-    "configPath": [
-      "xpack",
-      "serverless",
-      "workplaceAI"
-    ],
+    "configPath": ["xpack", "serverless", "workplaceAI"],
     "requiredPlugins": [
       "serverless",
       "navigation",
       "agentBuilder",
-      "workflowsManagement"
+      "workflowsManagement",
+      "navigation",
+      "dashboard"
     ],
     "optionalPlugins": [],
     "requiredBundles": []
