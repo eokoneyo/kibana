@@ -31,9 +31,21 @@ export const createNavigationTree = (core: CoreStart): NavigationTreeDefinition 
       {
         link: 'dashboards',
         icon: 'productDashboard',
+        renderAs: 'panelOpener',
         getIsActive: ({ pathNameSerialized, prepend }) => {
           return pathNameSerialized.startsWith(prepend('/app/dashboards'));
         },
+        children: [
+          {
+            id: 'recent-dashboards',
+            title: i18n.translate('xpack.serverlessWorkplaceAI.nav.dashboards.recentlyViewed', {
+              defaultMessage: 'Recently viewed',
+            }),
+            renderAs: 'extension',
+            extensionId: 'recentlyAccessedDashboards',
+            popoverOnly: true,
+          },
+        ],
       },
       {
         link: 'discover',

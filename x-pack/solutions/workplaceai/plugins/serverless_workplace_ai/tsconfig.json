@@ -22,6 +22,10 @@
     "@kbn/i18n",
     "@kbn/core-chrome-browser",
     "@kbn/deeplinks-workflows",
+<<<<<<< HEAD
     "@kbn/navigation-plugin",
+=======
+    "@kbn/dashboard-plugin",
+>>>>>>> e9a93aef9afa (configure workplaceai to use recent dashboard nav extension)
   ]
 }
