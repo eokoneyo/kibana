@@ -5,6 +5,7 @@
  * 2.0.
  */
 
+import type { NodeDefinition } from '@kbn/core-chrome-browser';
 import { createNavigationTree } from './navigation_tree';
 import type { CoreStart } from '@kbn/core/public';
 import { coreMock } from '@kbn/core/public/mocks';
@@ -42,7 +43,7 @@ describe('Navigation Tree', () => {
   it('includes Manage jobs link to Stack Management anomaly detection jobs list under ML nav', () => {
     const { body } = createNavigationTree(mockApplication);
     const mlNode = body.find((item: any) => item.id === 'machine_learning');
-    const anomalySection = mlNode?.children?.find(
+    const anomalySection = (mlNode as NodeDefinition)?.children?.find(
       (item: any) => item.id === 'category-anomaly_detection'
     );
 
@@ -58,7 +59,7 @@ describe('Navigation Tree', () => {
     const { footer } = createNavigationTree(mockApplication);
 
     const adminAndSettingsNode = footer?.find((item: any) => item.id === 'admin_and_settings');
-    const mlSection = adminAndSettingsNode?.children?.find(
+    const mlSection = (adminAndSettingsNode as NodeDefinition)?.children?.find(
       (item: any) => item.id === 'settings_ml'
     );
 
@@ -72,7 +73,7 @@ describe('Navigation Tree', () => {
     const { footer } = createNavigationTree(mockApplication);
 
     const adminAndSettingsNode = footer?.find((item: any) => item.id === 'admin_and_settings');
-    const aiSection = adminAndSettingsNode?.children?.find(
+    const aiSection = (adminAndSettingsNode as NodeDefinition)?.children?.find(
       (item: any) => item.id === 'settings_ai'
     );
 
@@ -98,7 +99,7 @@ describe('Navigation Tree', () => {
     const { footer } = createNavigationTree({ ...mockApplication, showAiAssistant: false });
 
     const adminAndSettingsNode = footer?.find((item: any) => item.id === 'admin_and_settings');
-    const aiSection = adminAndSettingsNode?.children?.find(
+    const aiSection = (adminAndSettingsNode as NodeDefinition)?.children?.find(
       (item: any) => item.id === 'settings_ai'
     );
 

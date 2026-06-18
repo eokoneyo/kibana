@@ -62,6 +62,7 @@ dependsOn:
   - '@kbn/management-settings-ids'
   - '@kbn/alerting-v2-utils'
   - '@kbn/features-plugin'
+  - '@kbn/dashboard-plugin'
 tags:
   - plugin
   - prod

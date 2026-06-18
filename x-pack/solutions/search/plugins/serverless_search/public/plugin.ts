@@ -147,6 +147,7 @@ export class ServerlessSearchPlugin
         });
       })
     );
+
     serverless.initNavigation('es', navigationTree$);
 
     this.managementCardsSubscription = serverless
