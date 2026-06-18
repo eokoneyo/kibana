@@ -66,9 +66,18 @@ export const createNavigationTree = ({
         }),
         link: 'dashboards',
         icon: 'productDashboard',
+        renderAs: 'panelOpener',
         getIsActive: ({ pathNameSerialized, prepend }) => {
           return pathNameSerialized.startsWith(prepend('/app/dashboards'));
         },
+        children: [
+          {
+            id: 'recent-dashboards',
+            renderAs: 'extension',
+            extensionId: 'recentlyAccessedDashboards',
+            popoverOnly: true,
+          },
+        ],
       },
       {
         link: 'workflows',
