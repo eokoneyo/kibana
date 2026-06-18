@@ -62,6 +62,7 @@
     "@kbn/deeplinks-workflows",
     "@kbn/features-plugin",
     "@kbn/navigation-plugin",
-    "@kbn/ui-callout"
+    "@kbn/ui-callout",
+    "@kbn/dashboard-plugin"
   ]
 }

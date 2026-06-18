@@ -61,6 +61,8 @@ const PROJECT_PERFORMANCE_TITLE = i18n.translate(
   }
 );
 
+export const RECENT_DASHBOARDS_SLOT_ID = 'recentDashboards';
+
 export function createNavigationTree({
   core,
   showAiAssistant = true,
@@ -94,9 +96,18 @@ export function createNavigationTree({
       {
         link: 'dashboards',
         icon: 'productDashboard',
+        renderAs: 'panelOpener',
         getIsActive: ({ pathNameSerialized, prepend, location }) =>
           pathNameSerialized.startsWith(prepend('/app/dashboards')) ||
           isEditingFromDashboard(location, pathNameSerialized, prepend),
+        children: [
+          {
+            id: 'recent-dashboards',
+            renderAs: 'extension',
+            extensionId: 'recentlyAccessedDashboards',
+            popoverOnly: true,
+          },
+        ],
       },
       ...getWorkflowsNavPanel(core),
       {
