@@ -75,15 +75,21 @@ export type {
   SolutionNavigationDefinitions,
   NavigationCustomization,
   NavigationCustomizationMove,
-  SlotDataSources,
   NavExtensionSlotData,
   EuiSideNavItemTypeEnhanced,
   RenderAs,
 } from './project_navigation';
 
-export {
-  type NavTreeExtensionSlotDataSources,
-  defineNavTreeExtensionSlotDataSources,
+export type {
+  NavExtensionRegistry,
+  NavExtensionEntry,
+  NavExtensionId,
+  NavExtensionData,
+  NavExtensionRuntimeDefinition,
+  NavExtensionRuntimeDefinitionMap,
+  NavExtensionRegistryEntry,
+  NavExtensionRegistryEntryMap,
+  NavExtensionDefinitionMap,
 } from './nav_extensions';
 
 export type {
@@ -95,12 +101,3 @@ export type {
 } from './sidebar';
 
 export type { GlobalSearchConfig } from './chrome_next/global_search';
-
-export type {
-  NavExtensionRegistry,
-  NavExtensionEntry,
-  NavExtensionId,
-  NavExtensionData,
-  NavExtensionRuntimeDefinition,
-  NavExtensionDefinitionMap,
-} from './nav_extensions';

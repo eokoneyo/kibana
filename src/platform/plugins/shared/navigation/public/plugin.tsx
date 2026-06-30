@@ -20,8 +20,9 @@ import type { UnifiedSearchPublicPluginStart } from '@kbn/unified-search-plugin/
 import type { Space } from '@kbn/spaces-plugin/public';
 import type {
   SolutionId,
-  NavExtensionDefinitionMap,
+  NavExtensionData,
   NavExtensionId,
+  NavExtensionRegistryEntryMap,
 } from '@kbn/core-chrome-browser';
 import type { InternalChromeStart } from '@kbn/core-chrome-browser-internal';
 import type { NavExtensionDefinition } from '@kbn/shared-ux-navigation-extension-templates';
@@ -50,7 +51,7 @@ export class NavigationPublicPlugin
   private readonly stop$ = new ReplaySubject<void>(1);
   private readonly solutionNavDefinitions = new Map<SolutionId, AddSolutionNavigationArg>();
   private readonly customizationService = new NavigationCustomizationService();
-  private readonly navExtensions: NavExtensionDefinitionMap = {};
+  private readonly navExtensions: NavExtensionRegistryEntryMap = {};
   private chrome?: InternalChromeStart;
   private activeSolutionId: SolutionId | null = null;
   private isSolutionNavEnabled = false;
@@ -59,9 +60,10 @@ export class NavigationPublicPlugin
 
   public setup(core: CoreSetup, deps: NavigationPublicSetupDependencies): NavigationPublicSetup {
     const registerNavigationExtension = <Id extends NavExtensionId>(
-      definition: NavExtensionDefinition<Id>
+      definition: NavExtensionDefinition<Id>,
+      createData$: () => Observable<NavExtensionData<Id>>
     ) => {
-      this.navExtensions[definition.id as string] = definition;
+      this.navExtensions[definition.id as string] = { ...definition, createData$ };
     };
 
     return {
@@ -205,11 +207,7 @@ export class NavigationPublicPlugin
     if (!this.activeSolutionId || !this.chrome) return;
     const def = this.solutionNavDefinitions.get(this.activeSolutionId);
     if (!def) return;
-    this.chrome.project.initNavigation(
-      this.activeSolutionId,
-      def.navigationTree$,
-      def.slotDataSources
-    );
+    this.chrome.project.initNavigation(this.activeSolutionId, def.navigationTree$);
   }
 
   private initiateChromeStyleAndSideNav(

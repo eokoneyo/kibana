@@ -21,22 +21,18 @@ import type {
   ChromeBreadcrumbsBadge,
   ChromeNext,
   GlobalHeaderAiButton,
-  ChromeProjectNavigationNode,
-  ChromeSetProjectBreadcrumbsParams,
   ChromeUserBanner,
   GlobalSearchConfig,
-<<<<<<< HEAD
-  AppDeepLinkId,
   NavigationCustomization,
-=======
->>>>>>> b1d836d30fda (define orchestration contract for navigation extension within chrome)
   NavigationTreeDefinition,
   NavigationTreeDefinitionUI,
   CloudURLs,
   SolutionId,
-  SlotDataSources,
-  NavTreeExtensionSlotDataSources,
-  NavExtensionDefinitionMap,
+  NavExtensionRegistryEntryMap,
+  NavExtensionRuntimeDefinitionMap,
+  NavExtensionSlotData,
+  ChromeProjectNavigationNode,
+  ChromeSetProjectBreadcrumbsParams,
 } from '@kbn/core-chrome-browser';
 
 /** @internal */
@@ -102,8 +98,7 @@ export interface InternalChromeStart extends ChromeStart {
     /** Initialise project navigation from a definition tree. */
     initNavigation<TTree extends NavigationTreeDefinition>(
       id: SolutionId,
-      navigationTree$: Observable<TTree>,
-      slotDataSources?: NavTreeExtensionSlotDataSources<TTree>
+      navigationTree$: Observable<TTree>
     ): void;
 
     /** Get an observable of the resolved project navigation tree and active nodes. */
@@ -148,15 +143,18 @@ export interface InternalChromeStart extends ChromeStart {
 
     /** Register the handler that opens the navigation customization modal. Called once by the navigation plugin. */
     registerCustomizeNavigationHandler(handler: () => void): void;
-    
-    /** Get the per-solution slot data-source map (keyed by `slotId`) for the active navigation. */
-    getActiveSlotDataSources$(): Observable<SlotDataSources | undefined>;
 
-    /** Push the global, declarative extension-definition registry (keyed by `extensionId`). */
-    setExtensionRegistry(registry: NavExtensionDefinitionMap): void;
+    /** Push the global extension registry (template definitions + data factories), keyed by `extensionId`. */
+    setExtensionRegistry(registry: NavExtensionRegistryEntryMap): void;
 
-    /** Get the global extension-definition registry. */
-    getExtensionRegistry$(): Observable<NavExtensionDefinitionMap>;
+    /** Get the global extension template-definition registry (without data factories). */
+    getExtensionRegistry$(): Observable<NavExtensionRuntimeDefinitionMap>;
+
+    /**
+     * Lazily materialize and return the shared data stream for an extension.
+     * Returns undefined when the extension is unknown or has no `createData$`.
+     */
+    getExtensionData$(extensionId: string): Observable<NavExtensionSlotData> | undefined;
   };
 
   /** @internal Extends public `next` with `get$` for Chrome layout components. */

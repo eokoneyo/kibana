@@ -9,7 +9,6 @@
 
 import type { Serializable } from '@kbn/utility-types';
 import type { Observable } from 'rxjs';
-import type { ExtensionPointNodeDefinition, NavigationTreeDefinition } from './project_navigation';
 
 /**
  * Augmentable registry of navigation extensions. Publisher plugins declare the extensions
@@ -27,9 +26,9 @@ import type { ExtensionPointNodeDefinition, NavigationTreeDefinition } from './p
 /* eslint-disable-next-line @typescript-eslint/no-empty-interface */
 export interface NavExtensionRegistry {}
 
-/** A registry entry declaring the row-data contract a slot's `data$` emits for an extension. */
+/** A registry entry declaring the data contract an extension template receives. */
 export interface NavExtensionEntry<Data = Serializable> {
-  /** Element type the slot's `data$` must emit. */
+  /** Value passed to the extension template's `data` prop. */
   data: Data;
 }
 
@@ -43,60 +42,16 @@ export type NavExtensionId = [keyof NavExtensionRegistry] extends [never]
   ? string
   : keyof NavExtensionRegistry;
 
-/** The data contract (element type the slot's `data$` emits) for a given extension id. */
+/** The data contract (element type the extension template receives) for a given extension id. */
 export type NavExtensionData<Id extends NavExtensionId> = Id extends keyof NavExtensionRegistry
   ? NavExtensionRegistry[Id] extends NavExtensionEntry<infer Data>
     ? Data
     : Serializable
   : Serializable;
 
-type ExtensionSlotPairFromChild<Node> = Node extends ExtensionPointNodeDefinition
-  ? Node extends { id: infer I; extensionId: infer E }
-    ? I extends string
-      ? { slotId: I; extensionId: E }
-      : never
-    : never
-  : never;
-
-type ExtensionSlotPairsFromPanelOpenerChildren<Children extends readonly unknown[]> =
-  ExtensionSlotPairFromChild<Children[number]>;
-
-type ExtensionSlotPairsFromRoot<Node> = Node extends { children?: infer Children }
-  ? NonNullable<Children> extends readonly unknown[]
-    ? ExtensionSlotPairsFromPanelOpenerChildren<NonNullable<Children>>
-    : never
-  : never;
-
-type ExtensionSlotPairsFromNodes<Nodes extends readonly unknown[]> = ExtensionSlotPairsFromRoot<
-  Nodes[number]
->;
-
-/** returns Union of every `{ slotId, extensionId }` placement used in a navigation tree (slotId is the extension node id). */
-type ExtractExtensionSlots<T extends NavigationTreeDefinition> =
-  | ExtensionSlotPairsFromNodes<T['body']>
-  | (T['footer'] extends readonly unknown[] ? ExtensionSlotPairsFromNodes<T['footer']> : never);
-
 /**
- * The slot data-source map a solution must supply at registration: keyed by every
- * extension node `id` placed in the tree, each value an `Observable` emitting exactly the row
- * type the referenced extension declared in `NavExtensionRegistry`.
- */
-export type NavTreeExtensionSlotDataSources<T extends NavigationTreeDefinition> = {
-  [P in ExtractExtensionSlots<T> as P['slotId']]: Observable<NavExtensionData<P['extensionId']>>;
-};
-
-/**
- * Helper to author a tree's slot data-source map with full type inference. Each key
- * must be an extension node `id` placed in the tree, and each value an `Observable` emitting the
- * row type the referenced extension declared in `NavExtensionRegistry`.
- */
-export const defineNavTreeExtensionSlotDataSources = <T extends NavigationTreeDefinition>(
-  slotDataSources: NavTreeExtensionSlotDataSources<T>
-): NavTreeExtensionSlotDataSources<T> => slotDataSources;
-
-/**
- * Runtime-erased definition transported through the chrome `project` API. Chrome and the side
- * navigation shell do not know template configs; they only carry this opaque definition to the
+ * Runtime-erased template definition transported through the chrome `project` API. Chrome and the
+ * side navigation shell do not know template configs; they only carry this opaque definition to the
  * template host, which re-applies the precise types from the templates package. The typed
  * `NavExtensionDefinition<Id>` (templates package) is structurally assignable to this.
  */
@@ -106,5 +61,13 @@ export interface NavExtensionRuntimeDefinition {
   config: unknown;
 }
 
-/** Runtime map of all registered extension definitions, keyed by extension id. */
-export type NavExtensionDefinitionMap = Partial<Record<string, NavExtensionRuntimeDefinition>>;
+/** Runtime map of template definitions exposed to the template host, keyed by extension id. */
+export type NavExtensionRuntimeDefinitionMap = Record<string, NavExtensionRuntimeDefinition>;
+
+/** Internal registry entry including the chrome-owned data factory. */
+export interface NavExtensionRegistryEntry extends NavExtensionRuntimeDefinition {
+  createData$: () => Observable<Serializable>;
+}
+
+/** Full extension registry passed to chrome at navigation start, keyed by extension id. */
+export type NavExtensionRegistryEntryMap = Record<string, NavExtensionRegistryEntry>;

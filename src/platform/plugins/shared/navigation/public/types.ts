@@ -13,8 +13,8 @@ import type { UnifiedSearchPublicPluginStart } from '@kbn/unified-search-plugin/
 import type {
   NavigationTreeDefinition,
   SolutionNavigationDefinition,
+  NavExtensionData,
   NavExtensionId,
-  NavTreeExtensionSlotDataSources,
 } from '@kbn/core-chrome-browser';
 import type { NavExtensionDefinition } from '@kbn/shared-ux-navigation-extension-templates';
 import type { CloudSetup, CloudStart } from '@kbn/cloud-plugin/public';
@@ -33,23 +33,18 @@ export interface NavigationPublicSetup {
    */
   registerMenuItem: TopNavMenuExtensionsRegistrySetup['register'];
   /**
-   * Publish a navigation extension definition (template id + declarative config).
-   * The `Id` must be a key registered in `NavExtensionRegistry` via declaration merging.
+   * Publish a navigation extension definition (template id + declarative config) and its
+   * data factory. The `Id` must be a key registered in `NavExtensionRegistry` via declaration merging.
    */
   registerNavigationExtension: <Id extends NavExtensionId>(
-    definition: NavExtensionDefinition<Id>
+    definition: NavExtensionDefinition<Id>,
+    createData$: () => Observable<NavExtensionData<Id>>
   ) => void;
 }
 
 export interface SolutionNavigation<T extends NavigationTreeDefinition>
   extends Omit<SolutionNavigationDefinition, 'navigationTree$'> {
   navigationTree$: Observable<T>;
-  /**
-   * Observable data sources powering the tree's extension slots, keyed by `slotId`.
-   * Typed from the tree so every placed slot must supply a `data$` emitting exactly
-   * the row type the referenced extension declared in `NavExtensionRegistry`.
-   */
-  slotDataSources?: NavTreeExtensionSlotDataSources<T>;
 }
 
 export type AddSolutionNavigationArg<

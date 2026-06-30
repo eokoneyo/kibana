@@ -139,7 +139,7 @@ const createStartContractMock = () => {
       setNavigationCustomization: jest.fn(),
       getCustomizeNavigationHandler$: jest.fn().mockReturnValue(new BehaviorSubject(null)),
       registerCustomizeNavigationHandler: jest.fn(),
-      getActiveSlotDataSources$: jest.fn().mockReturnValue(new BehaviorSubject(undefined)),
+      getExtensionData$: jest.fn().mockReturnValue(undefined),
       setExtensionRegistry: jest.fn(),
       getExtensionRegistry$: jest.fn().mockReturnValue(new BehaviorSubject({})),
     }),

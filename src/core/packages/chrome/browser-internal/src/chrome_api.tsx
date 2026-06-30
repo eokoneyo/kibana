@@ -70,11 +70,8 @@ export function createChromeApi({
   const project: InternalChromeStart['project'] = {
     setCloudUrls: projectNavigation.setCloudUrls.bind(projectNavigation),
     setKibanaName: projectNavigation.setKibanaName.bind(projectNavigation),
-    initNavigation: (id, navigationTree$, slotDataSources) => {
+    initNavigation: (id, navigationTree$) => {
       validateProjectStyle();
-      if (slotDataSources) {
-        projectNavigation.setSlotDataSources(id, slotDataSources);
-      }
       projectNavigation.initNavigation(id, navigationTree$);
     },
     getNavigation$: () => projectNavigation.getNavigation$(),
@@ -87,7 +84,7 @@ export function createChromeApi({
     getCustomizeNavigationHandler$: () => projectNavigation.getCustomizeNavigationHandler$(),
     registerCustomizeNavigationHandler: (handler) =>
       projectNavigation.registerCustomizeNavigationHandler(handler),
-    getActiveSlotDataSources$: () => projectNavigation.getActiveSlotDataSources$(),
+    getExtensionData$: (extensionId) => projectNavigation.getExtensionData$(extensionId),
     setExtensionRegistry: (registry) => projectNavigation.setExtensionRegistry(registry),
     getExtensionRegistry$: () => projectNavigation.getExtensionRegistry$(),
   };

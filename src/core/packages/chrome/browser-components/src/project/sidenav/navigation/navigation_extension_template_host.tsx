@@ -25,7 +25,7 @@ export type { NavExtensionPointContext, NavExtensionRuntimeDefinition };
 export interface NavExtensionTemplateHostProps {
   /** Resolved extension definition (template id + declarative config). */
   definition: NavExtensionRuntimeDefinition;
-  /** Data source powering this slot, resolved by the framework from the active solution. */
+  /** Data source powering this extension, resolved by the framework from the registry. */
   data$: Observable<NavExtensionSlotData>;
   /** Rendering context (surface, active item, slot/extension ids). */
   context: NavExtensionPointContext;
@@ -43,7 +43,7 @@ const useLatest = <T,>(source$: Observable<T>): T | undefined => {
 };
 
 /**
- * Subscribes to a slot's `data$` and renders the template named by the extension
+ * Subscribes to an extension's `data$` and renders the template named by the extension
  * definition.
  */
 const NavExtensionTemplateHost = ({
@@ -68,14 +68,12 @@ const NavExtensionTemplateHost = ({
 export const useRenderNavExtensionPoint = () => {
   const chrome = useChromeService();
   const extensionRegistry$ = useMemo(() => chrome.project.getExtensionRegistry$(), [chrome]);
-  const slotDataSources$ = useMemo(() => chrome.project.getActiveSlotDataSources$(), [chrome]);
   const extensionRegistry = useObservable(extensionRegistry$, undefined);
-  const slotDataSources = useObservable(slotDataSources$, undefined);
 
   const renderExtensionPoint = useCallback(
     (slotId: string, extensionId: string, context: NavExtensionRenderContext) => {
       const definition = extensionRegistry?.[extensionId];
-      const data$ = slotDataSources?.[slotId];
+      const data$ = chrome.project.getExtensionData$(extensionId);
 
       if (!definition || !data$) {
         return null;
@@ -89,7 +87,7 @@ export const useRenderNavExtensionPoint = () => {
         />
       );
     },
-    [extensionRegistry, slotDataSources]
+    [chrome, extensionRegistry]
   );
 
   return renderExtensionPoint;

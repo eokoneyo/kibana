@@ -72,14 +72,15 @@ export type {
   SolutionNavigationDefinitions,
   NavigationCustomization,
   NavigationCustomizationMove,
-  SlotDataSources,
   NavExtensionSlotData,
-  NavTreeExtensionSlotDataSources,
   NavExtensionRegistry,
   NavExtensionEntry,
   NavExtensionId,
   NavExtensionData,
   NavExtensionRuntimeDefinition,
+  NavExtensionRuntimeDefinitionMap,
+  NavExtensionRegistryEntry,
+  NavExtensionRegistryEntryMap,
   NavExtensionDefinitionMap,
   EuiSideNavItemTypeEnhanced,
   RenderAs,
@@ -91,5 +92,3 @@ export type {
   SidebarStart,
   GlobalSearchConfig,
 } from './src';
-
-export { defineNavTreeExtensionSlotDataSources } from './src';

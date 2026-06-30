@@ -336,14 +336,8 @@ export type SolutionNavigationDefinitions = {
   [id in SolutionId]?: SolutionNavigationDefinition;
 };
 
-/** Value emitted by a slot data `Observable` (row object, row array, etc.). */
+/** Value emitted by an extension data `Observable` (row object, row array, etc.). */
 export type NavExtensionSlotData = Serializable;
-
-/**
- * Runtime data sources powering extension slots, keyed by extension node `id`. Supplied by a
- * solution at registration; the serializable tree only references slots by node id.
- */
-export type SlotDataSources = Record<string, Observable<NavExtensionSlotData>>;
 
 /**
  * Temporary helper interface while we have to maintain both the legacy side navigation
