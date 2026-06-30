@@ -112,15 +112,15 @@ const createSecondaryMenuItem = (
 const createExtensionPointSection = (
   child: ChromeExtensionPointNavigationNode
 ): SecondaryMenuSection | null => {
-  if (!child.slotId || !child.extensionId) {
-    warnOnce(`Extension node "${child.id}" is missing slotId/extensionId. Ignoring this section.`);
+  if (!child.extensionId) {
+    warnOnce(`Extension node "${child.id}" is missing extensionId. Ignoring this section.`);
     return null;
   }
 
   return {
     id: child.id,
     label: child.title ? toSentenceCase(child.title) : undefined,
-    slotId: child.slotId,
+    slotId: child.id,
     extensionId: child.extensionId,
     popoverOnly: child.popoverOnly,
   };
@@ -378,7 +378,7 @@ const extractHomeNode = (
  *   - Nodes without links that aren't panel openers are treated as section dividers and not supported in new nav - their children are flattened
  *   - panelOpener nodes create flyout secondary navigation panels, they can't have links directly, but can have sections with links
  * - 3rd level is used for secondary navigation (children of panelOpener), processed in tree order:
- *   - `renderAs: 'extension'` nodes become dynamic extension slot sections (`slotId` / `extensionId`)
+ *   - `renderAs: 'extension'` nodes become dynamic extension slot sections; the node `id` is used as the slot key, plus `extensionId`
  *   - Nodes with children become named section headers; their children (L4) become menu items
  *   - Direct links (href, no children) are coalesced into anonymous sections when the panel has no section headers; otherwise each direct link becomes its own single-item section
  * - Footer is limited to 5 items maximum (extras are dropped with warning)

@@ -155,7 +155,6 @@ describe('parseNavigationTree', () => {
               id: 'recent-dashboards',
               title: 'Recently viewed',
               renderAs: 'extension',
-              slotId: 'security.dashboards.recent',
               extensionId: 'recentlyAccessedDashboards',
               popoverOnly: true,
             },
@@ -172,7 +171,7 @@ describe('parseNavigationTree', () => {
 
     const extensionNode = panelOpener.children![0];
     expect(extensionNode.renderAs).toBe('extension');
-    expect(extensionNode.slotId).toBe('security.dashboards.recent');
+    expect(extensionNode.id).toBe('recent-dashboards');
     expect(extensionNode.extensionId).toBe('recentlyAccessedDashboards');
     expect(extensionNode.popoverOnly).toBe(true);
     expect(extensionNode.deepLink).toBeUndefined();

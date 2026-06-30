@@ -346,7 +346,6 @@ describe('extension point sections', () => {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'security.dashboards.recent',
           extensionId: 'recentlyAccessedDashboards',
           popoverOnly: true,
           path: 'dashboards.recent-dashboards',
@@ -388,7 +387,7 @@ describe('extension point sections', () => {
       {
         id: 'recent-dashboards',
         label: 'Recently viewed',
-        slotId: 'security.dashboards.recent',
+        slotId: 'recent-dashboards',
         extensionId: 'recentlyAccessedDashboards',
         popoverOnly: true,
       },
@@ -417,7 +416,6 @@ describe('extension point sections', () => {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'security.dashboards.recent',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.recent-dashboards',
         },
@@ -431,7 +429,6 @@ describe('extension point sections', () => {
           id: 'pinned-dashboards',
           title: 'Pinned',
           renderAs: 'extension',
-          slotId: 'security.dashboards.pinned',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.pinned-dashboards',
         },
@@ -480,7 +477,6 @@ describe('extension point sections', () => {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'security.dashboards.recent',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.recent-dashboards',
         },
@@ -522,7 +518,6 @@ describe('extension point sections', () => {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'security.dashboards.recent',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.recent-dashboards',
         },
@@ -543,7 +538,6 @@ describe('extension point sections', () => {
           id: 'pinned-dashboards',
           title: 'Pinned',
           renderAs: 'extension',
-          slotId: 'security.dashboards.pinned',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.pinned-dashboards',
         },
@@ -586,7 +580,6 @@ describe('extension point sections', () => {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'security.dashboards.recent',
           extensionId: 'recentlyAccessedDashboards',
           path: 'dashboards.recent-dashboards',
         },
@@ -594,7 +587,6 @@ describe('extension point sections', () => {
           id: 'hidden-extension',
           title: 'Hidden',
           renderAs: 'extension',
-          slotId: 'security.dashboards.hidden',
           extensionId: 'recentlyAccessedDashboards',
           sideNavStatus: 'hidden',
           path: 'dashboards.hidden-extension',
@@ -629,5 +621,49 @@ describe('extension point sections', () => {
       'recent-dashboards',
       'dashboards-section',
     ]);
+  });
+
+  it('skips extension nodes missing extensionId', async () => {
+    const panelOpener: ChromeProjectNavigationNode = {
+      id: 'dashboards',
+      title: 'Dashboards',
+      icon: 'dashboardApp',
+      renderAs: 'panelOpener',
+      path: 'dashboards',
+      children: [
+        {
+          id: 'invalid-extension',
+          title: 'Invalid',
+          renderAs: 'extension',
+          extensionId: '',
+          path: 'dashboards.invalid-extension',
+        },
+      ],
+    };
+
+    const tree: NavigationTreeDefinitionUI = {
+      id: 'security',
+      body: [
+        {
+          id: 'home',
+          title: 'Security',
+          renderAs: 'home',
+          href: '/app/security/get_started',
+          path: 'home',
+        },
+        panelOpener,
+      ],
+    };
+
+    const { navItems } = createNavigationItems(tree);
+
+    expect(navItems.primaryItems.find((item) => item.id === 'dashboards')).toBeUndefined();
+
+    await waitFor(() => {
+      expect(consoleWarnSpy).toHaveBeenCalled();
+    });
+    expect(consoleWarnSpy.mock.calls[0][0]).toContain(
+      'Extension node "invalid-extension" is missing extensionId'
+    );
   });
 });

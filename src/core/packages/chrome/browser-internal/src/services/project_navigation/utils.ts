@@ -288,7 +288,6 @@ const initNavNode = <
       path,
       title,
       renderAs: 'extension',
-      slotId: node.slotId,
       extensionId: node.extensionId,
       sideNavStatus,
     };

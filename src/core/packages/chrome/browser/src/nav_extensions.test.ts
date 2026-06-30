@@ -21,7 +21,6 @@ const tree = {
           id: 'recent-dashboards',
           title: 'Recently viewed',
           renderAs: 'extension',
-          slotId: 'recentDashboards',
           extensionId: 'recentlyAccessedDashboards',
           popoverOnly: true,
         },
@@ -35,7 +34,7 @@ const tree = {
  */
 type Assert<T extends true> = T;
 type Tree = typeof tree;
-type ExpectSlotKey = 'recentDashboards' extends keyof NavTreeExtensionSlotDataSources<Tree>
+type ExpectSlotKey = 'recent-dashboards' extends keyof NavTreeExtensionSlotDataSources<Tree>
   ? true
   : false;
 

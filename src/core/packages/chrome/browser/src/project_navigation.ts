@@ -170,7 +170,6 @@ interface ChromeNavigationNodeCommon
 /** @public */
 export interface ChromeExtensionPointNavigationNode extends ChromeNavigationNodeCommon {
   renderAs: Extract<RenderAs, 'extension'>;
-  slotId: string;
   extensionId: string;
   popoverOnly?: boolean;
   children?: never;
@@ -212,14 +211,14 @@ export interface ChromeSetProjectBreadcrumbsParams {
 /**
  * Leaf section rendered by a framework template (an "extension slot").
  * Valid only under `panelOpener.children`. The node is plain serializable data:
- * `slotId` is the per-placement key (owned by the solution), `extensionId` references
+ * the node `id` serves as the slot key, and `extensionId` references
  * the plugin-published extension definition. The powering `data$` is supplied separately
- * in the slot data-source map at registration.
+ * in the slot data-source map at registration, keyed by the node `id`.
  */
 export interface ExtensionPointNodeDefinition<Id extends string = string>
   extends Omit<NodeDefinitionCommon<AppDeepLinkId, Id>, 'cloudLink' | 'link' | 'href'> {
+  id: Id;
   renderAs: Extract<RenderAs, 'extension'>;
-  slotId: string;
   extensionId: NavExtensionId;
   popoverOnly?: boolean;
   children?: never;
@@ -341,8 +340,8 @@ export type SolutionNavigationDefinitions = {
 export type NavExtensionSlotData = Serializable;
 
 /**
- * Runtime data sources powering extension slots, keyed by `slotId`. Supplied by a
- * solution at registration; the serializable tree only references slots by id.
+ * Runtime data sources powering extension slots, keyed by extension node `id`. Supplied by a
+ * solution at registration; the serializable tree only references slots by node id.
  */
 export type SlotDataSources = Record<string, Observable<NavExtensionSlotData>>;
 

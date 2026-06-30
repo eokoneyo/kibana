@@ -51,9 +51,9 @@ export type NavExtensionData<Id extends NavExtensionId> = Id extends keyof NavEx
   : Serializable;
 
 type ExtensionSlotPairFromChild<Node> = Node extends ExtensionPointNodeDefinition
-  ? Node extends { slotId: infer S; extensionId: infer E }
-    ? S extends string
-      ? { slotId: S; extensionId: E }
+  ? Node extends { id: infer I; extensionId: infer E }
+    ? I extends string
+      ? { slotId: I; extensionId: E }
       : never
     : never
   : never;
@@ -71,14 +71,14 @@ type ExtensionSlotPairsFromNodes<Nodes extends readonly unknown[]> = ExtensionSl
   Nodes[number]
 >;
 
-/** returns Union of every `{ slotId, extensionId }` placement used in a navigation tree. */
+/** returns Union of every `{ slotId, extensionId }` placement used in a navigation tree (slotId is the extension node id). */
 type ExtractExtensionSlots<T extends NavigationTreeDefinition> =
   | ExtensionSlotPairsFromNodes<T['body']>
   | (T['footer'] extends readonly unknown[] ? ExtensionSlotPairsFromNodes<T['footer']> : never);
 
 /**
  * The slot data-source map a solution must supply at registration: keyed by every
- * `slotId` placed in the tree, each value an `Observable` emitting exactly the row
+ * extension node `id` placed in the tree, each value an `Observable` emitting exactly the row
  * type the referenced extension declared in `NavExtensionRegistry`.
  */
 export type NavTreeExtensionSlotDataSources<T extends NavigationTreeDefinition> = {
@@ -87,7 +87,7 @@ export type NavTreeExtensionSlotDataSources<T extends NavigationTreeDefinition> 
 
 /**
  * Helper to author a tree's slot data-source map with full type inference. Each key
- * must be a `slotId` placed in the tree, and each value an `Observable` emitting the
+ * must be an extension node `id` placed in the tree, and each value an `Observable` emitting the
  * row type the referenced extension declared in `NavExtensionRegistry`.
  */
 export const defineNavTreeExtensionSlotDataSources = <T extends NavigationTreeDefinition>(
