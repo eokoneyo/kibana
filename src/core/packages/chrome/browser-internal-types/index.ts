@@ -32,6 +32,7 @@ import type {
   NavExtensionRuntimeDefinitionMap,
   NavExtensionSlotData,
   ChromeProjectNavigationNode,
+  ChromeExtensionPointNavigationNode,
   ChromeSetProjectBreadcrumbsParams,
 } from '@kbn/core-chrome-browser';
 
@@ -105,7 +106,7 @@ export interface InternalChromeStart extends ChromeStart {
     getNavigation$(): Observable<{
       solutionId: SolutionId;
       navigationTree: NavigationTreeDefinitionUI;
-      activeNodes: ChromeProjectNavigationNode[][];
+      activeNodes: Array<Array<ChromeProjectNavigationNode | ChromeExtensionPointNavigationNode>>;
       overflowItemIds: string[];
       /** Default top-level item IDs before any user customization is applied. */
       defaultItemIds: string[];

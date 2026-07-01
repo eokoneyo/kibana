@@ -166,7 +166,13 @@ describe('initNavigation()', () => {
     test('should add metadata to node (title, path, href, sideNavStatus...)', async () => {
       const treeDefinition = await getNavigationTree();
       const [node] = treeDefinition.body as [ChromeProjectNavigationNode];
-      expect(node.children![0]).toEqual({
+      const child = node.children![0];
+
+      if (child.renderAs === 'extension') {
+        throw new Error('Expected a standard navigation node');
+      }
+
+      expect(child).toEqual({
         id: 'foo',
         title: 'FOO',
         path: 'group1.foo',
@@ -175,7 +181,7 @@ describe('initNavigation()', () => {
         isExternalLink: false,
         sideNavStatus: 'visible',
       });
-      expect(node.children![0].href).toBe(node.children![0]!.deepLink!.href);
+      expect(child.href).toBe(child.deepLink!.href);
     });
 
     test('should allow href for absolute links', async () => {

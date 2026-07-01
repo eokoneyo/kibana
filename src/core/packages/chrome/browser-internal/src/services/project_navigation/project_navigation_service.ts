@@ -37,7 +37,6 @@ import {
   switchMap,
   shareReplay,
   catchError,
-  EMPTY,
 } from 'rxjs';
 import type { Location, History } from 'history';
 import deepEqual from 'react-fast-compare';
@@ -224,7 +223,7 @@ export class ProjectNavigationService {
       getExtensionData$: (extensionId: string): Observable<NavExtensionSlotData> | undefined => {
         const entry = extensionRegistry$.getValue()[extensionId];
         if (!entry?.createData$) {
-          return EMPTY;
+          return undefined;
         }
 
         let shared$ = materializedExtensionData$.get(extensionId);

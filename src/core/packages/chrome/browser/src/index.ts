@@ -51,8 +51,6 @@ export type { ChromeBadge, ChromeBreadcrumbsBadge, ChromeUserBanner, ChromeStyle
 
 export type {
   ChromeProjectNavigationNode,
-  ChromeRootNavigationNode,
-  ChromeStandardNavigationNode,
   ChromeExtensionPointNavigationNode,
   ExtensionPointNodeDefinition,
   PanelOpenerChildDefinition,
@@ -89,7 +87,6 @@ export type {
   NavExtensionRuntimeDefinitionMap,
   NavExtensionRegistryEntry,
   NavExtensionRegistryEntryMap,
-  NavExtensionDefinitionMap,
 } from './nav_extensions';
 
 export type {
