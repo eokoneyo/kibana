@@ -190,6 +190,11 @@ export interface ChromeProjectNavigationNode extends ChromeNavigationNodeCommon 
    * - home - node should be rendered as the home link
    */
   renderAs?: Exclude<RenderAs, 'extension'>;
+  /**
+   * When true on a panel opener, sections are only shown in the hover popover and never
+   * in the persistent expanded side panel.
+   */
+  popoverOnly?: boolean;
   /** App id or deeplink id */
   deepLink?: ChromeNavLink;
   /**

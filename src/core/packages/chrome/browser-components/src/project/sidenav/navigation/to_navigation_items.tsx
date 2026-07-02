@@ -39,6 +39,9 @@ export interface NavigationItems {
 
 type PanelOpenerChild = ChromeProjectNavigationNode | ChromeExtensionPointNavigationNode;
 
+const isExtensionNode = (node: PanelOpenerChild): node is ChromeExtensionPointNavigationNode =>
+  node.renderAs === 'extension';
+
 interface NavigationConversionContext {
   panelStateManager: PanelStateManager;
   deepestActiveItemId?: string;
@@ -133,8 +136,7 @@ const createNamedSection = (
 ): SecondaryMenuSection | null => {
   const validChildren =
     child.children?.filter(
-      (c): c is ChromeProjectNavigationNode =>
-        c.renderAs !== 'extension' && c.sideNavStatus !== 'hidden'
+      (c): c is ChromeProjectNavigationNode => !isExtensionNode(c) && c.sideNavStatus !== 'hidden'
     ) ?? [];
   const secondaryItems = validChildren.map((c) => createSecondaryMenuItem(c, panelNode, ctx));
 
@@ -317,7 +319,7 @@ const convertRootNodes = (
 
       if (navNode.children?.length) {
         const flattenableChildren = navNode.children.filter(
-          (child): child is ChromeProjectNavigationNode => child.renderAs !== 'extension'
+          (child): child is ChromeProjectNavigationNode => !isExtensionNode(child)
         );
         items.push(...convertRootNodes(flattenableChildren, ctx));
       }
