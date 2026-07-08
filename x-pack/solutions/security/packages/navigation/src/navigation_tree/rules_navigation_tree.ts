@@ -5,13 +5,13 @@
  * 2.0.
  */
 
-import type { RootNodePanelOpenerDefinition } from '@kbn/core-chrome-browser';
+import type { PanelOpenerNodeDefinition } from '@kbn/core-chrome-browser';
 import { SecurityPageName, SecurityGroupName } from '../constants';
 import { SecurityLinkGroup } from '../link_groups';
 import { securityLink } from '../links';
 import { i18nStrings } from '../i18n_strings';
 
-export const createRulesNavigationTree = (): RootNodePanelOpenerDefinition => ({
+export const createRulesNavigationTree = (): PanelOpenerNodeDefinition => ({
   id: SecurityGroupName.rules,
   title: SecurityLinkGroup[SecurityGroupName.rules].title,
   icon: 'radar',

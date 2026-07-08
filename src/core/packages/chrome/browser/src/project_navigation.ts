@@ -207,10 +207,7 @@ export type StandardNodeDefinition<
   renderAs?: never;
   children?: Array<
     | StandardNodeDefinition<LinkId, ChildrenId, ChildrenId>
-    | (NodeDefinitionCommon<LinkId, Id> & {
-        renderAs: 'panelOpener';
-        children?: Array<StandardNodeDefinition<LinkId, ChildrenId>>;
-      })
+    | PanelOpenerNodeDefinition<LinkId, ChildrenId, ChildrenId>
   >;
 };
 
@@ -220,7 +217,8 @@ export type PanelOpenerChildDefinition<
   Id extends string = string
 > = StandardNodeDefinition<LinkId, Id, Id>;
 
-export type RootNodePanelOpenerDefinition<
+/** A node that opens a flyout panel. Valid both at the root and nested under a standard node. */
+export type PanelOpenerNodeDefinition<
   LinkId extends AppDeepLinkId = AppDeepLinkId,
   Id extends string = string,
   ChildrenId extends string = Id
@@ -240,7 +238,7 @@ export type RootNodeDefinition<
       renderAs: 'home';
       children?: never;
     })
-  | RootNodePanelOpenerDefinition<LinkId, Id, ChildrenId>;
+  | PanelOpenerNodeDefinition<LinkId, Id, ChildrenId>;
 
 /**
  * @public

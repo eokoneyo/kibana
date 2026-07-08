@@ -56,7 +56,7 @@ export type {
   PanelOpenerChildDefinition,
   StandardNodeDefinition,
   RootNodeDefinition,
-  RootNodePanelOpenerDefinition,
+  PanelOpenerNodeDefinition,
   CloudLinkId,
   CloudLink,
   CloudLinks,

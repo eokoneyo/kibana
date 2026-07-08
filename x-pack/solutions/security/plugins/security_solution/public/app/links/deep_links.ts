@@ -9,12 +9,7 @@ import type { Subject, Subscription } from 'rxjs';
 import { combineLatestWith, debounceTime } from 'rxjs';
 import type { AppDeepLink, AppUpdater, AppDeepLinkLocations } from '@kbn/core/public';
 import type { SecurityPageName } from '@kbn/deeplinks-security';
-import type {
-  NavigationTreeDefinition,
-  NodeDefinition,
-  PanelOpenerChildDefinition,
-  StandardNodeDefinition,
-} from '@kbn/core-chrome-browser';
+import type { NavigationTreeDefinition, NodeDefinition } from '@kbn/core-chrome-browser';
 import { SecurityLinkGroup } from '@kbn/security-solution-navigation/links';
 import type { SecurityGroupName } from '@kbn/security-solution-navigation';
 import type { AppLinkItems, LinkItem, NormalizedLinks } from '../../common/links/types';
@@ -67,10 +62,8 @@ export const solutionFormatter = (
   return solutionNodesFormatter(nodes, normalizedLinks);
 };
 
-type SolutionNavNode = NodeDefinition | PanelOpenerChildDefinition | StandardNodeDefinition;
-
 const solutionNodesFormatter = (
-  navigationNodes: SolutionNavNode[],
+  navigationNodes: NodeDefinition[],
   normalizedLinks: NormalizedLinks
 ): AppDeepLink[] => {
   const deepLinks: AppDeepLink[] = [];
