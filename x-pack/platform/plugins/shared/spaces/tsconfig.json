@@ -80,7 +80,8 @@
     "@kbn/deeplinks-shared",
     "@kbn/deeplinks-workplace-ai",
     "@kbn/core-user-profile-server",
-    "@kbn/ui-callout"
+    "@kbn/ui-callout",
+    "@kbn/core-user-profile-common"
   ],
   "exclude": ["target/**/*"]
 }
