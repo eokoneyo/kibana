@@ -118,6 +118,18 @@ export const TabWithBackground = React.forwardRef<HTMLDivElement, TabWithBackgro
   }
 );
 
+/**
+ * Draws the concave "flare" that joins the selected tab's side border to the tabs bar separator
+ * line, using plain CSS instead of an inline SVG.
+ *
+ * The element is a square sitting just outside the tab's bottom corner, within the 4px tab margin
+ * plus the 4px inline padding the scrollable tabs container reserves for it. Rounding the square's
+ * corner that touches the tab turns the square's own shape into the transparent "hole" of the
+ * curve. The spread-only `box-shadow` then paints the tab background everywhere else inside the
+ * square (covering the separator line underneath), and a one-sided border traces the curve with
+ * the same color as the tab's side borders. `clip-path` keeps the shadow from spilling outside the
+ * square.
+ */
 const Accent = ({
   direction,
   euiTheme,
@@ -125,33 +137,26 @@ const Accent = ({
   direction: 'left' | 'right';
   euiTheme: EuiThemeComputed;
 }) => {
+  const size = euiTheme.size.s;
+  // the side of the square that touches the tab
+  const tabSide = direction === 'left' ? 'right' : 'left';
+
   return (
-    <svg
+    <span
+      aria-hidden="true"
       css={css`
-        height: ${euiTheme.size.s};
-        width: ${euiTheme.size.s};
         position: absolute;
         bottom: 0;
-        ${direction === 'left' ? `left: -${euiTheme.size.s};` : `right: -${euiTheme.size.s};`};
-        ${direction === 'left' ? 'transform: scaleX(-1);' : ''};
+        ${direction}: -${size};
+        width: ${size};
+        height: ${size};
+        pointer-events: none;
+        border-bottom-${tabSide}-radius: ${size};
+        border-bottom: ${euiTheme.border.width.thin} solid ${euiTheme.colors.borderBaseSubdued};
+        border-${tabSide}: ${euiTheme.border.width.thin} solid ${euiTheme.colors.borderBaseSubdued};
+        box-shadow: 0 0 0 ${size} ${euiTheme.colors.backgroundBasePlain};
+        clip-path: inset(0);
       `}
-      xmlns="http://www.w3.org/2000/svg"
-      width={euiTheme.size.s}
-      height={euiTheme.size.s}
-      viewBox="0 0 8 8"
-      fill="none"
-    >
-      <path
-        d="M8 7.92676C7.67329 7.97351 7.33964 8 7 8H8V7.92676ZM0 8H7C3.13401 8 0 4.86599 0 1C0 0.660412 0.0255308 0.326664 0.0722656 0H0V8Z"
-        fill={euiTheme.colors.backgroundBasePlain}
-      />
-      <path
-        d="M7 8C3.13401 8 0 4.86599 0 1C0 0.660412 0.0255308 0.326664 0.0722656 0"
-        fill="none"
-        stroke={euiTheme.colors.borderBaseSubdued}
-        strokeWidth={euiTheme.border.width.thin}
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
+    />
   );
 };
