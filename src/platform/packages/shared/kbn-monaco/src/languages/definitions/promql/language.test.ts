@@ -9,7 +9,6 @@
 
 import { monaco } from '../../../monaco_imports';
 import { registerLanguage } from '../../helpers';
-import { ESQLLang } from '../esql';
 import { PromQLLang, PROMQL_LANG_ID } from '.';
 
 // These tests intentionally use the real `monaco-promql` package: the definition is loaded lazily
@@ -20,55 +19,83 @@ import { PromQLLang, PROMQL_LANG_ID } from '.';
 // point it at the same ESM API module `@kbn/monaco` itself uses so both share one Monaco instance.
 jest.mock('monaco-editor', () => jest.requireActual('monaco-editor/editor/editor.api.js'));
 
-const tokenTypes = (line: string, languageId: string) =>
-  monaco.editor.tokenize(line, languageId)[0].map((token) => token.type);
-
 describe('PromQLLang', () => {
-  beforeAll(() => {
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: jest.fn().mockImplementation((query) => ({
-        matches: false,
-        media: query,
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      })),
-    });
+  let setTokens: jest.Spied<typeof monaco.languages.setMonarchTokensProvider>;
+  let setConfig: jest.Spied<typeof monaco.languages.setLanguageConfiguration>;
 
+  beforeAll(() => {
     // Languages must be registered with Monaco before their config/tokenizer can be set.
     registerLanguage(PromQLLang);
-    registerLanguage(ESQLLang);
+  });
+
+  beforeEach(() => {
+    setTokens = jest.spyOn(monaco.languages, 'setMonarchTokensProvider');
+    setConfig = jest.spyOn(monaco.languages, 'setLanguageConfiguration');
+  });
+
+  afterEach(() => {
+    [setTokens, setConfig].forEach((spy) => {
+      /**
+       * `onLanguage` discards the disposables Monaco returns for tokenizer and configuration
+       * registrations.
+       * Since we spy on the invocations, the return values are still recorded, allowing us to dispose them; disposing them
+       * resets Monaco's registry so every test has to install what it needs itself.
+       */
+      spy.mock.results.forEach((result) => {
+        if (result.type === 'return') {
+          result.value.dispose();
+        }
+      });
+
+      spy.mockRestore();
+    });
+  });
+
+  it('does not register the tokenizer if the monaco-promql definition is not found', async () => {
+    jest.doMock('monaco-promql', () => {
+      throw new Error('monaco-promql module not found');
+    });
+
+    await expect(PromQLLang.onLanguage?.()).resolves.toBeUndefined();
+
+    expect(setTokens).not.toHaveBeenCalled();
+    expect(setConfig).not.toHaveBeenCalled();
+
+    jest.dontMock('monaco-promql');
   });
 
   it('lazily loads the real monaco-promql definition and registers its tokenizer', async () => {
-    const setTokens = jest.spyOn(monaco.languages, 'setMonarchTokensProvider');
-    const setConfig = jest.spyOn(monaco.languages, 'setLanguageConfiguration');
-
     await expect(PromQLLang.onLanguage?.()).resolves.toBeUndefined();
 
     expect(setTokens).toHaveBeenCalledWith(
       PROMQL_LANG_ID,
       expect.objectContaining({ tokenizer: expect.any(Object) })
     );
-    expect(setConfig).toHaveBeenCalledWith(PROMQL_LANG_ID, expect.any(Object));
 
-    setTokens.mockRestore();
-    setConfig.mockRestore();
+    expect(setConfig).toHaveBeenCalledWith(PROMQL_LANG_ID, expect.any(Object));
   });
 
-  it('highlights a PromQL query embedded in an ES|QL PROMQL command', async () => {
-    // ES|QL's `onLanguage` awaits `PromQLLang.onLanguage`, so the PromQL tokenizer must be
-    // installed by the time the ES|QL language finishes loading. Mirror what Monaco does when a
-    // model first uses the language.
-    await ESQLLang.onLanguage?.();
+  it('the PromQL language definition integrates with the editor as expected', async () => {
+    const onPromQLLanguageSpy = jest.spyOn(PromQLLang, 'onLanguage');
 
-    const types = tokenTypes('PROMQL step=1m (rate(http_requests_total[5m]))', ESQLLang.ID);
+    const PROMQL_QUERY = 'PROMQL step=1m (rate(http_requests_total[5m]))';
 
-    // `.promql` suffixed tokens are only produced by the embedded PromQL tokenizer.
-    expect(types.some((type) => type.endsWith('.promql'))).toBe(true);
+    const model = monaco.editor.createModel(PROMQL_QUERY, PROMQL_LANG_ID);
+
+    expect(onPromQLLanguageSpy).toHaveBeenCalledTimes(1);
+
+    // createModel fires onLanguage without awaiting it; so we wait for the lazy import to finish.
+    await onPromQLLanguageSpy.mock.results[0].value;
+
+    expect(setTokens).toHaveBeenCalledTimes(1);
+    expect(setConfig).toHaveBeenCalledTimes(1);
+
+    const tokensByLine = monaco.editor.tokenize(model.getValue(), model.getLanguageId());
+
+    expect(
+      tokensByLine[0].map((token) => token.type).some((type) => type.endsWith('.promql'))
+    ).toBe(true);
+
+    model.dispose();
   });
 });

@@ -15,11 +15,15 @@ export const PROMQL_LANG_ID = 'promql' as const;
 export const PromQLLang: LangModuleType = {
   ID: PROMQL_LANG_ID,
   async onLanguage() {
-    const promQLDefinition = await import('monaco-promql').then(
-      ({ promLanguageDefinition }) => promLanguageDefinition
-    );
-    const promQL = await promQLDefinition.loader();
-    monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, promQL.language);
-    monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, promQL.languageConfiguration);
+    try {
+      const promQLDefinition = await import('monaco-promql').then(
+        ({ promLanguageDefinition }) => promLanguageDefinition
+      );
+      const promQL = await promQLDefinition.loader();
+      monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, promQL.language);
+      monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, promQL.languageConfiguration);
+    } catch {
+      // It's unlikely that the promQL definition is not found, but if this is the case we don't want to throw an error.
+    }
   },
 };
