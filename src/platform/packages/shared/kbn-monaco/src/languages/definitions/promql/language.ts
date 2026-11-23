@@ -7,7 +7,6 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-import { promLanguageDefinition } from 'monaco-promql';
 import type { LangModuleType } from '../../../types';
 import { monaco } from '../../../monaco_imports';
 
@@ -16,7 +15,10 @@ export const PROMQL_LANG_ID = 'promql' as const;
 export const PromQLLang: LangModuleType = {
   ID: PROMQL_LANG_ID,
   async onLanguage() {
-    const promQL = await promLanguageDefinition.loader();
+    const promQLDefinition = await import('monaco-promql').then(
+      ({ promLanguageDefinition }) => promLanguageDefinition
+    );
+    const promQL = await promQLDefinition.loader();
     monaco.languages.setMonarchTokensProvider(PROMQL_LANG_ID, promQL.language);
     monaco.languages.setLanguageConfiguration(PROMQL_LANG_ID, promQL.languageConfiguration);
   },
